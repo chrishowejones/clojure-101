@@ -26,6 +26,7 @@
        (sequence (comp (mapcat :films) (map :studio)))
        frequencies
        (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])))
+       (zipmap [:film :count])
        json/generate-string))
 
 (defroutes routes
@@ -53,7 +54,6 @@
 
 
   ;; then convert to json string
-
 
 
   )
