@@ -3,12 +3,10 @@
 (def size "The size of the board" 3)
 
 (def coordinates
-  ;; TODO implement using for
-  )
+  (for [x (range size) y (range size)] [x y]))
 
 (def coordinates? (set coordinates))
-(def empty-board ;; TODO implement using zipmap and repeat
-  )
+(def empty-board (zipmap coordinates (repeat :owner/none)))
 
 (defn get-owner-at
   "Get the owner associated to the cell"
@@ -27,14 +25,12 @@
   [board player coord]
   {:pre [(coordinates? coord)
          (not (has-owner? board coord))]}
-  ;; TODO complete implementation
-  )
+  (assoc board coord player))
 
 (defn full-board?
   "Verifies whether the board has any empty cell left"
   [board]
-  ;; implement using not-any?
-  )
+  (not-any? #{:owner/none} (vals board)))
 
 (comment
 

@@ -19,11 +19,14 @@
   {\"first-name\":\"Danielle\",\"last-name\":\"Howe-Jones\",\"nickname\":\"Dan\"}]")
 
 (defn most-popular-studio
+  "takes in json string, extracts films and within that studio then determines
+   frequencies and extracts max before turning into json string"
   [people-json]
-  ;; TODO implement taking in json string, extracting films and within that studio then determine
-  ;; frequencies and extract max before turning into json string
-  "implement me"
-  )
+  (->> (json/decode people-json true)
+       (sequence (comp (mapcat :films) (map :studio)))
+       frequencies
+       (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])))
+       json/generate-string))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here!")

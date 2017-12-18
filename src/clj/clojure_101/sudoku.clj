@@ -18,20 +18,23 @@
   "split vector of lvars representing game board into rows"
   [vars]
   ;;  split into rows as a vector within a vector
-  )
+  (->> vars
+       (partition 9)
+       (map vec)
+       (into [])))
 
 (defn get-square
   "Given rows and the toop left x y coord - return a sequence representing
   a square"
   [rows x y]
-  ;; implement using nested for comprehension
-  )
+  (for [x2 (range x (+ x 3)) y2 (range y (+ y 3))]
+    (get-in rows [x2 y2])))
 
 (defn cols
   "Given rows return columns"
   [rows]
   ;; given rows create a sequence of vectors representing cols
-  )
+  (apply map vector rows))
 
 (defn init [vars hints]
   (if (seq vars)
@@ -61,11 +64,15 @@
 
 (comment
 
+  (rows hints)
+
   (apply
    partition 9 (sudokufd hints))
 
   (rest (range 10))
 
   (get-square (into [] (map vec (partition 9 hints))) 3 3)
+
+  (cols (rows hints))
 
   )
