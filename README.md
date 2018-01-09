@@ -14,10 +14,15 @@ There are 3 distinct parts to the project.
 3. Clojure API that serves up two resources (/api/people and
    /api/popular-studio). See src/clj/clojure_101/api.clj
 
+## Dependencies
+
+Clojure the language is downloaded as a dependency for this project
+therefore only Java 1.7+ and Leiningen (https://leiningen.org/) need to be pre-installed.
+
 ## Usage
 
 You can run the project in development mode using the Leiningen build
-tool (https://leiningen.org/ - relies on Java 1.7+).
+tool (https://leiningen.org/).
 
 The easiest way to do this is to issue the following lein command from
 the project root directory (the directory this README is in after
