@@ -1,10 +1,10 @@
 (defproject clojure-101 "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Example code for Clojure and Clojurescript."
+  :url "http://github.com/chrishowejones/clojure-101"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [ring-server "0.5.0"]
                  [reagent "0.7.0"]
                  [reagent-utils "0.2.1"]
@@ -16,11 +16,12 @@
                  [org.clojure/clojurescript "1.9.946"
                   :scope "provided"]
                  [secretary "1.2.3"]
-                 [venantius/accountant "0.2.0"
+                 [venantius/accountant "0.2.4"
                   :exclusions [org.clojure/tools.reader]]
                  [cheshire "5.8.0"]
                  [org.clojure/core.logic "0.8.11"
-                  :exclusions [org.clojure/clojure]]]
+                  :exclusions [org.clojure/clojure]]
+                 [org.clojure/spec.alpha "0.2.168"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]

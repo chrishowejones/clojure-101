@@ -1,8 +1,8 @@
 (ns clojure-101.repl
-  (:use clojure-101.handler
-        figwheel-sidecar.repl-api
-        ring.server.standalone
-        [ring.middleware file-info file]))
+  (:require [clojure-101.handler :refer :all]
+            [ring.server.standalone :refer [serve]]
+            [ring.middleware.file :refer [wrap-file]]
+            [ring.middleware.file-info :refer [wrap-file-info]]))
 
 (defonce server (atom nil))
 

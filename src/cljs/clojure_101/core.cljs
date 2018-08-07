@@ -8,9 +8,9 @@
 ;; Views
 
 (defn home-page []
-  [:div [:h2 "Welcome to clojure-101"]
+  [:div [:h2 "Welcome to clojure-101 demo"]
    [:div [:a {:href "/about"} "go to about page"]]
-   [:div [:a {:href "/tictactoe"} "go to tic-tac-toe"]]])
+   [:div [:a {:href "/tictactoe"} "go to play tic-tac-toe"]]])
 
 (defn about-page []
   [:div [:h2 "About clojure-101"]
@@ -49,3 +49,12 @@
        (secretary/locate-route path))})
   (accountant/dispatch-current!)
   (mount-root))
+
+(comment
+
+  @page
+  (reset! page #'home-page)
+  (reset! page #'about-page)
+  (reset! page #'ttt/tic-tac-toe)
+
+  )

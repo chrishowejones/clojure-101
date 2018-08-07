@@ -1,0 +1,21 @@
+# -*- restclient -*-
+#
+GET http://localhost:3000/api
+
+# Get people api
+GET http://localhost:3000/api/people
+
+# Get popular studio
+GET http://localhost:3000/api/popular-studio
+
+# Get anti forgery token
+GET http://localhost:3000
+
+# POST person
+POST http://localhost:3000/api/people
+Content-Type: application/json
+
+{ "first-name":"Bob", "last-name": "Smith" }
+
+#
+GET http://localhost:3000/js/app.js

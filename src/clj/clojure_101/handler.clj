@@ -1,10 +1,11 @@
 (ns clojure-101.handler
-  (:require [compojure.core :refer [GET defroutes context]]
-            [compojure.route :refer [not-found resources]]
-            [hiccup.page :refer [include-js include-css html5]]
+  (:require [clojure-101.api :as api]
             [clojure-101.middleware :refer [wrap-middleware]]
-            [clojure-101.api :as api]
-            [config.core :refer [env]]))
+            [compojure.core :refer [context defroutes GET]]
+            [compojure.route :refer [not-found resources]]
+            [config.core :refer [env]]
+            [hiccup.page :refer [html5 include-css include-js]]
+            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]))
 
 (def mount-target
   [:div#app
