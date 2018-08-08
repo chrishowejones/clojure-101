@@ -36,10 +36,10 @@
          (zipmap [:studio :count])
          json/generate-string)))
 
-(defn add-person [people person]
-  (let [person (s/conform :clojure-101.api-spec/person person)]
-    (when (s/invalid? person)
-      (throw (IllegalArgumentException. (s/explain-str :clojure-101.api-spec/person person))))
+(defn add-person [people person-decoded]
+  (let [person (s/conform :clojure-101.api-spec/person person-decoded)]
+    (when (s/invalid? person )
+      (throw (IllegalArgumentException. (s/explain-str :clojure-101.api-spec/person person-decoded))))
     (conj people person)))
 
 (defroutes routes

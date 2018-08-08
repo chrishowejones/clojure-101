@@ -15,7 +15,4 @@ GET http://localhost:3000
 POST http://localhost:3000/api/people
 Content-Type: application/json
 
-{ "first-name":"Bob", "last-name": "Smith" }
-
-#
-GET http://localhost:3000/js/app.js
+{ "first-name":"Dexter", "last-name": "Dog","films":[{"title":"Up","studio":"Pixar","release-year":"2009"}]}

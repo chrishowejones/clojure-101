@@ -30,5 +30,9 @@
   (s/conform ::people [{:first-name "chris" :last-name "howe-jones"
                         :films '({:title "A new hope" :studio "Paramount" :release-year "1977"})}])
 
+  (s/explain-str ::person
+             (cheshire.core/decode
+              "{ \"first-name\":\"Dexter\", \"last-name\": \"Dog\",\"films\":[{\"title\":\"Up\",\"studio\":\"Pixar\"}]}"
+              true))
 
   )
