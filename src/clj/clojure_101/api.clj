@@ -44,8 +44,7 @@
 
 (defroutes routes
   (GET "/" [] "add some links to routes here!")
-  (GET "/people" [] (do (println ring.anti-forgery/*anti-forgery-token*)
-                        (json/encode @people)))
+  (GET "/people" [] (json/encode @people))
   (GET "/popular-studio" [] (most-popular-studio @people))
   (POST "/people" req
         (let [person-json (-> req :body slurp)]
