@@ -1,12 +1,11 @@
 (ns clojure-101.handler
   (:require [clojure-101.api :as api]
+            [clojure-101.middleware :refer [wrap-api-middleware wrap-middleware]]
             [compojure.core :refer [context defroutes GET]]
             [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [ring.middleware.defaults
-             :refer
-             [api-defaults site-defaults wrap-defaults]]))
+            [ring.middleware.defaults :refer [api-defaults site-defaults]]))
 
 (def mount-target
   [:div#app
@@ -38,8 +37,8 @@
 
 (defroutes routes
   (GET "/cards" [] (cards-page))
-  (wrap-defaults (context "/api" [] api/routes) api-defaults)
-  (wrap-defaults (GET "/*" [] (loading-page)) site-defaults)
+  (wrap-api-middleware (context "/api" [] api/routes))
+  (wrap-middleware (GET "/*" [] (loading-page)))
   (resources "/")
   (not-found "Not Found"))
 
