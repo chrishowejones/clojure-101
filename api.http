@@ -8,11 +8,9 @@ GET http://localhost:3000/api/people
 # Get popular studio
 GET http://localhost:3000/api/popular-studio
 
-# Get anti forgery token
-GET http://localhost:3000
-
 # POST person
 POST http://localhost:3000/api/people
 Content-Type: application/json
 
-{ "first-name":"Dexter", "last-name": "Dog","films":[{"title":"Up","studio":"Pixar","release-year":"2009"}]}
+{ "first-name":"Fiona", "last-name": "Hobbs","films":[{"title":"Toy Story","studio":"Pixar","release-year":"1996"},
+{"title":"Fifty Shades of Grey", "studio":"Paramount", "release-year":"2015"}]}

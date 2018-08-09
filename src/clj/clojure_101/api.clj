@@ -23,7 +23,7 @@
 (def people (atom (json/decode people-json true)))
 
 (defn most-popular-studio
-  "takes in json string, extracts films and within that studio then determines
+  "takes in map of people, extracts films and within that studio then determines
    frequencies and extracts max before turning into json string"
   [people-decoded]
   (let [people (s/conform :clojure-101.api-spec/people people-decoded)]
@@ -36,11 +36,15 @@
          (zipmap [:studio :count])
          json/generate-string)))
 
-(defn add-person [people person-decoded]
+(defn add-person
+  "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
+  [people person-decoded]
   (let [person (s/conform :clojure-101.api-spec/person person-decoded)]
-    (when (s/invalid? person )
-      (throw (IllegalArgumentException. (s/explain-str :clojure-101.api-spec/person person-decoded))))
-    (conj people person)))
+    (if (s/invalid? person )
+      (assoc {} :error  (s/explain-str :clojure-101.api-spec/person person-decoded))
+      (do
+        (swap! people conj person)
+        person))))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here!")
@@ -48,16 +52,35 @@
   (GET "/popular-studio" [] (most-popular-studio @people))
   (POST "/people" req
         (let [person-json (-> req :body slurp)]
-          (swap! people add-person (json/decode person-json true))
           (-> {}
-              (assoc :body person-json)
+              (assoc :body (-> people
+                               (add-person (json/decode person-json true))
+                               json/encode))
               (assoc :status 201)))))
 
 
 (comment
 
   (s/conform :clojure-101.api-spec/people [{:first-name "Cerys" :last-name "howe-jones"
-                        :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+                                            :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+
+  (s/explain-str :clojure-101.api-spec/person
+             (json/decode
+              "{
+                 \"first-name\": \"Fiona\",
+                 \"last-name\": \"Hobbs\",
+                 \"films\": [
+                           {
+                            \"title\": \"Toy Story\",
+                            \"studio\": \"Pixar\",
+                            \"release-year\": \"1996\"
+                            },
+                           {
+                            \"title\": \"Fifty Shades of Grey\",
+                            \"release-year\": \"2015\"
+                            }
+                           ]
+                 }" true))
 
   (def people (json/decode people-json true))
   people
