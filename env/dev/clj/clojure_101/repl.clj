@@ -1,8 +1,8 @@
 (ns clojure-101.repl
-  (:require [clojure-101.handler :refer :all]
-            [ring.server.standalone :refer [serve]]
+  (:require [clojure-101.handler :refer [app]]
             [ring.middleware.file :refer [wrap-file]]
-            [ring.middleware.file-info :refer [wrap-file-info]]))
+            [ring.middleware.file-info :refer [wrap-file-info]]
+            [ring.server.standalone :refer [serve]]))
 
 (defonce server (atom nil))
 
@@ -31,3 +31,17 @@
 (defn stop-server []
   (.stop @server)
   (reset! server nil))
+
+
+(comment
+  (start-server)
+
+  (require 'clojure.inspector)
+
+  (clojure.inspector/inspect @server)
+  (.setStopTimeout @server 3000)
+
+  (.getState @server)
+  (.start @server)
+
+  )

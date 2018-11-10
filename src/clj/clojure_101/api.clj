@@ -65,8 +65,8 @@
                                             :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
 
   (s/explain-str :clojure-101.api-spec/person
-             (json/decode
-              "{
+                 (json/decode
+                   "{
                  \"first-name\": \"Fiona\",
                  \"last-name\": \"Hobbs\",
                  \"films\": [
@@ -77,6 +77,7 @@
                             },
                            {
                             \"title\": \"Fifty Shades of Grey\",
+                            \"studio\": \"Paramount\",
                             \"release-year\": \"2015\"
                             }
                            ]
@@ -86,23 +87,58 @@
   people
 
   ;; get nickname
-
+  (sequence
+    (comp (map :nickname)
+          (filter (complement nil?)))
+    people)
 
   ;; get films
-
+  (mapcat :films people)
 
   ;; then get studio for each
-
+  (->> people
+       (mapcat :films)
+       (map :studio))
 
 
 
   ;; then determine number of occurances of each film
-
+  (->> people
+       (mapcat :films)
+       (map :studio)
+       frequencies)
 
   ;; then reduce over collection to get max occurance
-
+  (->> people
+       (mapcat :films)
+       (map :studio)
+       frequencies
+       (reduce (fn [[max-studio max-value] [studio value]]
+                 (if (< max-value value)
+                   [studio value]
+                   [max-studio max-value]))))
 
   ;; then convert to json string
+  (->> people
+       (mapcat :films)
+       (map :studio)
+       frequencies
+       (reduce (fn [[max-studio max-value] [studio value]]
+                 (if (< max-value value)
+                   [studio value]
+                   [max-studio max-value])))
+       json/encode)
+
+  (->> people
+       (sequence (comp (mapcat :films)
+                       (map :studio)))
+       frequencies
+       (reduce
+         (fn [[_ max-value :as max]  [_ value :as curr]]
+           (if (< max-value value)
+             curr
+             max))))
+
 
 
   )
