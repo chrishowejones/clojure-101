@@ -1,6 +1,7 @@
 (ns clojure-101.sudoku
-  (:require [clojure.core.logic :refer :all]
-            [clojure.core.logic.fd :as fd]))
+  (:require
+   [clojure.core.logic :refer [all everyg lvar run succeed]]
+   [clojure.core.logic.fd :as fd]))
 
 
 (def hints
@@ -64,7 +65,12 @@
 
 (comment
 
+  (count hints)
+
+  (init (repeatedly 81 lvar) hints)
+
   (rows hints)
+  (-> hints rows cols)
 
   (apply
    partition 9 (sudokufd hints))
@@ -72,6 +78,7 @@
   (rest (range 10))
 
   (get-square (into [] (map vec (partition 9 hints))) 3 3)
+
 
   (cols (rows hints))
 

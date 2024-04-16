@@ -7,3 +7,10 @@
  (defn -main [& args]
    (let [port (Integer/parseInt (or (env :port) "3000"))]
      (run-jetty app {:port port :join? false})))
+
+(comment
+  (-main)
+
+  (def server (run-jetty app {:port 3000 :join? true}))
+
+  )

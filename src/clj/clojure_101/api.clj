@@ -2,8 +2,7 @@
   (:require [cheshire.core :as json]
             [clojure-101.api-spec :as api-spec]
             [clojure.spec.alpha :as s]
-            [compojure.core :refer [defroutes GET POST]]
-            [ring.middleware.anti-forgery :as ring.anti-forgery]))
+            [compojure.core :refer [defroutes GET POST]]))
 
 (def people-json
   "[{\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -14,9 +13,10 @@
   ]},
   {\"first-name\":\"Cerys\",\"middle-name\":\"Eilonwy\",\"last-name\":\"Howe-Jones\",
   \"films\": [
-  {\"title\":\"Bambi\",\"studio\":\"Disney\",\"release-year\":\"1942\"},
-  {\"title\":\"Despicable Me\",\"studio\":\"Universal\",\"release-year\":\"2010\"},
-  {\"title\":\"Truman Show\",\"studio\":\"Paramount\",\"release-year\":\"1998\"}
+  {\"title\":\"Truman Show\",\"studio\":\"Paramount\",\"release-year\":\"1998\"},
+  {\"title\":\"Elemental\",\"studio\":\"Disney\",\"release-year\":\"2023\"},
+  {\"title\":\"Up\",\"studio\":\"Disney\",\"release-year\":\"2009\"},
+  {\"title\":\"Cinderella\",\"studio\":\"Disney\",\"release-year\":\"1950\"}
   ]},
   {\"first-name\":\"Danielle\",\"last-name\":\"Howe-Jones\",\"nickname\":\"Dan\"}]")
 
@@ -26,9 +26,9 @@
   "takes in map of people, extracts films and within that studio then determines
    frequencies and extracts max before turning into json string"
   [people-decoded]
-  (let [people (s/conform :clojure-101.api-spec/people people-decoded)]
+  (let [people (s/conform ::api-spec/people people-decoded)]
     (when (s/invalid? people)
-      (throw (IllegalArgumentException. (s/explain-str :clojure-101.api-spec/people people-decoded))))
+      (throw (IllegalArgumentException. (s/explain-str ::api-spec/people people-decoded))))
     (->> people
          (sequence (comp (mapcat :films) (map :studio)))
          frequencies
@@ -39,9 +39,9 @@
 (defn add-person
   "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
   [people person-decoded]
-  (let [person (s/conform :clojure-101.api-spec/person person-decoded)]
+  (let [person (s/conform ::api-spec/person person-decoded)]
     (if (s/invalid? person )
-      (assoc {} :error  (s/explain-str :clojure-101.api-spec/person person-decoded))
+      (assoc {} :error  (s/explain-str ::api-spec/person person-decoded))
       (do
         (swap! people conj person)
         person))))
@@ -61,12 +61,16 @@
 
 (comment
 
-  (s/conform :clojure-101.api-spec/people [{:first-name "Cerys" :last-name "howe-jones"
-                                            :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+  (s/conform ::api-spec/people [{:first-name "Cerys" :last-name "howe-jones"
+                                 :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+  ;; => [{:first-name "Cerys",
+  ;;      :last-name "howe-jones",
+  ;;      :films
+  ;;      [{:title "A new hope", :studio "Paramount", :release-year "1977"}]}]
 
   (s/explain-str :clojure-101.api-spec/person
                  (json/decode
-                   "{
+                  "{
                  \"first-name\": \"Fiona\",
                  \"last-name\": \"Hobbs\",
                  \"films\": [
@@ -82,34 +86,59 @@
                             }
                            ]
                  }" true))
+  ;; => "Success!\n"
 
-  (def people (json/decode people-json true))
-  people
+  (def people-map (json/decode people-json true))
+  people-map
+  ;; => ({:first-name "Chris",
+  ;;      :last-name "Howe-Jones",
+  ;;      :films
+  ;;      [{:title "Star Wars: Episode IV – A New Hope",
+  ;;        :studio "20th Century Fox",
+  ;;        :release-year "1977"}
+  ;;       {:title "Raiders of the Lost Ark",
+  ;;        :studio "Paramount",
+  ;;        :release-year "1981"}
+  ;;       {:title "The Godfather",
+  ;;        :studio "Paramount",
+  ;;        :release-year "1972"}]}
+  ;;     {:first-name "Cerys",
+  ;;      :middle-name "Eilonwy",
+  ;;      :last-name "Howe-Jones",
+  ;;      :films
+  ;;      [{:title "Bambi", :studio "Disney", :release-year "1942"}
+  ;;       {:title "Despicable Me",
+  ;;        :studio "Universal",
+  ;;        :release-year "2010"}
+  ;;       {:title "Truman Show",
+  ;;        :studio "Paramount",
+  ;;        :release-year "1998"}]}
+  ;;     {:first-name "Danielle", :last-name "Howe-Jones", :nickname "Dan"})
 
   ;; get nickname
   (sequence
-    (comp (map :nickname)
-          (filter (complement nil?)))
-    people)
+   (comp (map :nickname)
+         (filter (complement nil?)))
+   people-map)
 
   ;; get films
-  (mapcat :films people)
+  (mapcat :films people-map)
 
   ;; then get studio for each
-  (->> people
+  (->> people-map
        (mapcat :films)
        (map :studio))
 
 
 
   ;; then determine number of occurances of each film
-  (->> people
+  (->> people-map
        (mapcat :films)
        (map :studio)
        frequencies)
 
   ;; then reduce over collection to get max occurance
-  (->> people
+  (->> people-map
        (mapcat :films)
        (map :studio)
        frequencies
@@ -119,7 +148,7 @@
                    [max-studio max-value]))))
 
   ;; then convert to json string
-  (->> people
+  (->> people-map
        (mapcat :films)
        (map :studio)
        frequencies
@@ -129,15 +158,22 @@
                    [max-studio max-value])))
        json/encode)
 
-  (->> people
+  (->> people-map
        (sequence (comp (mapcat :films)
                        (map :studio)))
        frequencies
        (reduce
-         (fn [[_ max-value :as max]  [_ value :as curr]]
-           (if (< max-value value)
-             curr
-             max))))
+        (fn [[_ max-value :as max]  [_ value :as curr]]
+          (if (< max-value value)
+            curr
+            max)))
+       json/encode)
+
+  (most-popular-studio people-map)
+  (def people2 (atom []))
+  (add-person people2 {:first-name "Dexter" :last-name "Howe-Jones"})
+
+  people2
 
 
 

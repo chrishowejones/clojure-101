@@ -34,6 +34,9 @@
 
 
 (comment
+
+  @server
+
   (start-server)
 
   (require 'clojure.inspector)
@@ -43,5 +46,7 @@
 
   (.getState @server)
   (.start @server)
+
+
 
   )

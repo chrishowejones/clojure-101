@@ -4,8 +4,7 @@
             [compojure.core :refer [context defroutes GET]]
             [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
-            [hiccup.page :refer [html5 include-css include-js]]
-            [ring.middleware.defaults :refer [api-defaults site-defaults]]))
+            [hiccup.page :refer [html5 include-css include-js]]))
 
 (def mount-target
   [:div#app

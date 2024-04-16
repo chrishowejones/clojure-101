@@ -14,10 +14,12 @@
     (str winner-name " wins")
     (if (turn/game-over? turn)
       "Draw game"
-      "Tic Tac Toe")))
+      "Naughts and Crosses")))
 
 (comment
 
-  (get-winner-name )
+  (get-winner-name @clojure-101.tictactoe.store/current-turn)
+
+
 
   )

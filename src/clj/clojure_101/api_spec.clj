@@ -27,12 +27,18 @@
   (s/valid? ::people [{:first-name "chris" :last-name "howe-jones"}])
   (s/conform :clojure-101.api-spec/people [{:first-name "chris" :last-name "howe-jones"
                         :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+  ;; => [{:first-name "chris",
+  ;;      :last-name "howe-jones",
+  ;;      :films
+  ;;      [{:title "A new hope", :studio "Paramount", :release-year "1977"}]}]
   (s/conform ::people [{:first-name "chris" :last-name "howe-jones"
                         :films '({:title "A new hope" :studio "Paramount" :release-year "1977"})}])
+  ;; => :clojure.spec.alpha/invalid
 
   (s/explain-str ::person
              (cheshire.core/decode
               "{ \"first-name\":\"Dexter\", \"last-name\": \"Dog\",\"films\":[{\"title\":\"Up\",\"studio\":\"Pixar\"}]}"
               true))
+  ;; => "In: [:films 0] val: {:title \"Up\", :studio \"Pixar\"} fails spec: :clojure-101.api-spec/film at: [:films] predicate: (contains? % :release-year)\n"
 
   )
