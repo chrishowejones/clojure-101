@@ -66,12 +66,16 @@
 
   (count hints)
 
-  (init (repeatedly 81 lvar) hints)
-
   (rows hints)
   (-> hints rows cols)
 
-  (apply partition 9 (sudokufd hints))
+  (sudokufd hints)
+
+  {:hints (rows hints)
+   :solution (->> hints
+                  sudokufd
+                  first
+                  rows)}
 
   (get-square (into [] (map vec (partition 9 hints))) 3 3)
 
