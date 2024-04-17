@@ -30,6 +30,12 @@
 [1 2 3]
 (vector 1 2 3)
 (vec (list 1 2 3))
+(vec {:a 1 :b 2})
+
+;; keywords
+:a
+:name
+(keyword "key")
 
 ;; maps
 {:a 1 :name "Chris" 1 2}
@@ -37,16 +43,23 @@
 (get {:a 1 :name "Chris" 1 2} :name)
 (get {:a 1 :name "Chris" 1 2} 1)
 (get {:a 1 :name "Chris" 1 2} :z)
+(get {:a 1 :name "Chris" 1 2 :z nil} :z)
 (get {:a 1 :name "Chris" 1 2} :z :missing)
+(get {:a 1 :name "Chris" 1 2 :z nil} :z :missing)
 ({:a 1 :name "Chris" 1 2} :a)
 (:a {:a 1 :name "Chris" 1 2})
 (:name {:a 1 :name "Chris" 1 2})
-;; => "Chris"
+(def me {:name "Chris" :title "Jedi"})
+me
+(:name me)
+(def me-nil nil)
+(:name me-nil)
+;; (me-nil :name)
 
 ;;(1 {:a 1 :name "Chris" 1 2})
- ;; => ClassCastException class java.lang.Long cannot be cast to class clojure.lang.IFn (java.lang.Long is in module java.base of loader 'bootstrap'; clojure.lang.IFn is in unnamed module of loader 'app')  clojure-101.lesson/eval19782 (form-init17792907167632930503.clj:45)
+;; => ClassCastException class java.lang.Long cannot be cast to class clojure.lang.IFn (java.lang.Long is in module java.base of loader 'bootstrap'; clojure.lang.IFn is in unnamed module of loader 'app')  clojure-101.lesson/eval19782 (form-init17792907167632930503.clj:45)
 
- ;; sets
+;; sets
 #{1 2 3}
 ;; => #{1 3 2}
 ;; #{1 2 3 1}
