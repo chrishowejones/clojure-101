@@ -175,6 +175,8 @@
 
   people2
 
-
+  (add-person people {:first-name "Jonny" :last-name "Hobbs"})
+  (swap! people rest)
+  @people
 
   )

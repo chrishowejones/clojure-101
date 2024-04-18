@@ -52,8 +52,9 @@
 
 (comment
 
-  (js/alert "Hi")
+  (js/alert "Hi Chris")
   @page
+  (reset! page #'home-page)
   (reset! page #'about-page)
   (reset! page #'ttt/tic-tac-toe)
 

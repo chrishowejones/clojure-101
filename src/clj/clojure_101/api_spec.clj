@@ -3,7 +3,6 @@
 
 (s/def ::first-name string?)
 (s/def ::last-name string?)
-(s/def ::another number?)
 (s/def ::optional double?)
 (s/def ::title string?)
 (s/def ::studio string?)
@@ -26,7 +25,9 @@
   (s/valid? ::person {:first-name "chris" :last-name "howe-jones"})
   (s/valid? ::people [{:first-name "chris" :last-name "howe-jones"}])
   (s/conform :clojure-101.api-spec/people [{:first-name "chris" :last-name "howe-jones"
-                        :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
+                                            :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]
+                                            :optional 12.0}])
+
   ;; => [{:first-name "chris",
   ;;      :last-name "howe-jones",
   ;;      :films
@@ -36,9 +37,9 @@
   ;; => :clojure.spec.alpha/invalid
 
   (s/explain-str ::person
-             (cheshire.core/decode
-              "{ \"first-name\":\"Dexter\", \"last-name\": \"Dog\",\"films\":[{\"title\":\"Up\",\"studio\":\"Pixar\"}]}"
-              true))
+                 (cheshire.core/decode
+                  "{ \"first-name\":\"Dexter\", \"last-name\": \"Dog\",\"films\":[{\"title\":\"Up\",\"studio\":\"Pixar\"}]}"
+                  true))
   ;; => "In: [:films 0] val: {:title \"Up\", :studio \"Pixar\"} fails spec: :clojure-101.api-spec/film at: [:films] predicate: (contains? % :release-year)\n"
 
   )
