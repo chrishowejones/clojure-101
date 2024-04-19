@@ -15,3 +15,6 @@ pom.xml.asc
 /.sass-cache
 system.properties
 .floo*
+.clj-kondo/.cache
+.lsp
+.rebel_readline_history
