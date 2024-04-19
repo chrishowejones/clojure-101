@@ -14,7 +14,7 @@
     (str winner-name " wins")
     (if (turn/game-over? turn)
       "Draw game"
-      "Naughts and Crosses")))
+      "Tic Tac Toe")))
 
 (comment
 
