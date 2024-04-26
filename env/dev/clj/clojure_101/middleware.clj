@@ -3,6 +3,7 @@
             [ring.middleware.defaults
              :refer
              [api-defaults site-defaults wrap-defaults]]
+            [ring.middleware.json :refer [wrap-json-response]]
             [ring.middleware.reload :refer [wrap-reload]]))
 
 (defn wrap-middleware [handler]
@@ -15,4 +16,5 @@
   (-> handler
       (wrap-defaults api-defaults)
       wrap-exceptions
+      wrap-json-response
       wrap-reload))

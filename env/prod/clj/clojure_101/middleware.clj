@@ -1,10 +1,15 @@
 (ns clojure-101.middleware
   (:require [ring.middleware.defaults
              :refer
-             [api-defaults site-defaults wrap-defaults]]))
+             [api-defaults site-defaults wrap-defaults]]
+            [ring.middleware.json :refer [wrap-json-response]]))
 
 (defn wrap-middleware [handler]
-  (wrap-defaults handler site-defaults))
+  (-> handler
+      (wrap-defaults site-defaults)
+      wrap-json-response))
 
 (defn wrap-api-middleware [handler]
-  (wrap-defaults handler api-defaults))
+  (-> handler
+      (wrap-defaults api-defaults)
+      wrap-json-response))

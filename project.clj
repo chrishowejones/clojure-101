@@ -9,6 +9,7 @@
                  [reagent "0.7.0"]
                  [reagent-utils "0.2.1"]
                  [ring "1.6.2"]
+                 [ring/ring-json "0.5.1"]
                  [ring/ring-defaults "0.3.1"]
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]

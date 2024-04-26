@@ -1,8 +1,10 @@
 (ns clojure-101.api
-  (:require [cheshire.core :as json]
-            [clojure-101.api-spec :as api-spec]
-            [clojure.spec.alpha :as s]
-            [compojure.core :refer [defroutes GET POST]]))
+  (:require
+   [cheshire.core :as json]
+   [clojure-101.api-spec :as api-spec]
+   [clojure.spec.alpha :as s]
+   [compojure.core :refer [defroutes GET POST]]
+   [ring.util.response :refer [content-type response status]]))
 
 (def people-json
   "[{\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -32,7 +34,7 @@
     (->> people
          (sequence (comp (mapcat :films) (map :studio)))
          frequencies
-         (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])))
+         (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])) ["" 0])
          (zipmap [:studio :count])
          json/generate-string)))
 
@@ -47,19 +49,23 @@
         person))))
 
 (defroutes routes
-  (GET "/" [] "add some links to routes here!")
-  (GET "/people" [] (json/encode @people))
-  (GET "/popular-studio" [] (most-popular-studio @people))
+  (GET "/" [] "add some links to routes here please")
+  (GET "/people" [] (-> @people
+                        response
+                        (content-type "application/json")))
+  (GET "/popular-studio" [] (-> @people
+                                most-popular-studio
+                                response
+                                (content-type "application/json")))
   (POST "/people" req
-        (let [person-json (-> req :body slurp)]
-          (-> {}
-              (assoc :body (-> people
-                               (add-person (json/decode person-json true))
-                               json/encode))
-              (assoc :status 201)))))
-
+    (let [person-json (-> req :body slurp)]
+      (-> (response (add-person people (json/decode person-json true)))
+          (status 201)
+          (content-type "application/json")))))
 
 (comment
+
+  @people
 
   (s/conform ::api-spec/people [{:first-name "Cerys" :last-name "howe-jones"
                                  :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
@@ -176,7 +182,14 @@
   people2
 
   (add-person people {:first-name "Jonny" :last-name "Hobbs"})
-  (swap! people rest)
+  (swap! people first)
   @people
+
+  (reset! people (json/decode people-json true))
+
+  (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])) [{:studio ""} 0] {})
+
+  (frequencies
+   [{:studio "fred"} {:studio "fred"}])
 
   )
