@@ -16,15 +16,15 @@
   [core/home-page])
 
 (defcard-rg tic-tac-toe-page-card
-   "Tic Tac Toe page"
+   "Tic Tac Toe with state"
   [ttt/tic-tac-toe]
   store/app-state
   {:inspect-data true})
 
 (defcard-rg rg-example
   "some docs"
-  (fn [data-atom _] [:div "this works as well"
-                     [:p (str "My counter = " (dec (:counter @data-atom)))]])
+  (fn [data-atom _] [:div "this works as well, if you switch builds"
+                     [:p (str "Counter = " (:counter @data-atom))]])
   (reagent/atom {:counter 10})
   {:inspect-data true})
 
@@ -33,3 +33,10 @@
 
 ;; remember to run 'lein figwheel devcards' and then browse to
 ;; http://localhost:3449/cards
+(comment
+
+  (js/alert "Chris")
+
+
+
+  )
