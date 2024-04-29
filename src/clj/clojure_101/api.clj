@@ -7,20 +7,20 @@
    [ring.util.response :refer [content-type response status]]))
 
 (def people-json
-  "[{\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
+  "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
   \"films\": [
   {\"title\":\"Star Wars: Episode IV – A New Hope\",\"studio\":\"20th Century Fox\",\"release-year\":\"1977\"},
   {\"title\":\"Raiders of the Lost Ark\",\"studio\":\"Paramount\",\"release-year\":\"1981\"},
   {\"title\":\"The Godfather\",\"studio\":\"Paramount\",\"release-year\":\"1972\"}
   ]},
-  {\"first-name\":\"Cerys\",\"middle-name\":\"Eilonwy\",\"last-name\":\"Howe-Jones\",
+  {\"id\":2,\"first-name\":\"Cerys\",\"middle-name\":\"Eilonwy\",\"last-name\":\"Howe-Jones\",
   \"films\": [
   {\"title\":\"Truman Show\",\"studio\":\"Paramount\",\"release-year\":\"1998\"},
   {\"title\":\"Elemental\",\"studio\":\"Disney\",\"release-year\":\"2023\"},
   {\"title\":\"Up\",\"studio\":\"Disney\",\"release-year\":\"2009\"},
   {\"title\":\"Cinderella\",\"studio\":\"Disney\",\"release-year\":\"1950\"}
   ]},
-  {\"first-name\":\"Danielle\",\"last-name\":\"Howe-Jones\",\"nickname\":\"Dan\"}]")
+  {\"id\":3,\"first-name\":\"Danielle\",\"last-name\":\"Howe-Jones\",\"nickname\":\"Dan\"}]")
 
 (def people (atom (json/decode people-json true)))
 
@@ -41,15 +41,18 @@
 (defn add-person
   "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
   [people person-decoded]
-  (let [person (s/conform ::api-spec/person person-decoded)]
-    (if (s/invalid? person )
+  (let [person (s/conform ::api-spec/person person-decoded)
+        add-person-with-id  (fn [people person]
+                              (let [id (inc (apply max (map :id people)))]
+                                (conj people (assoc person :id id))))]
+    (if (s/invalid? person)
       (assoc {} :error  (s/explain-str ::api-spec/person person-decoded))
-      (do
-        (swap! people conj person)
-        person))))
+      (->> person
+           (swap! people add-person-with-id)
+           (take 1)))))
 
 (defroutes routes
-  (GET "/" [] "add some links to routes here please")
+  (GET "/" [] "add some links to routes here.")
   (GET "/people" [] (-> @people
                         response
                         (content-type "application/json")))
@@ -67,7 +70,7 @@
 
   @people
 
-  (s/conform ::api-spec/people [{:first-name "Cerys" :last-name "howe-jones"
+  (s/conform ::api-spec/people [{:first-name "Cerys" :last-name "howe-jones" :id 1
                                  :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
   ;; => [{:first-name "Cerys",
   ;;      :last-name "howe-jones",

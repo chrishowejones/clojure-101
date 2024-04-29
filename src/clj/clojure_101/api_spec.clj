@@ -1,9 +1,9 @@
 (ns clojure-101.api-spec
   (:require [clojure.spec.alpha :as s]))
 
+(s/def ::id integer?)
 (s/def ::first-name string?)
 (s/def ::last-name string?)
-(s/def ::optional double?)
 (s/def ::title string?)
 (s/def ::studio string?)
 (s/def ::release-year string?)
@@ -14,7 +14,7 @@
 
 (s/def ::person
     (s/keys :req-un [::first-name ::last-name]
-            :opt-un [::films ::optional]))
+            :opt-un [::id ::films]))
 
 (s/def ::people
   (s/coll-of ::person))
@@ -22,11 +22,11 @@
 
 (comment
 
-  (s/valid? ::person {:first-name "chris" :last-name "howe-jones"})
+  (s/valid? ::person {:id 1 :first-name "chris" :last-name "howe-jones"})
   (s/valid? ::people [{:first-name "chris" :last-name "howe-jones"}])
   (s/conform :clojure-101.api-spec/people [{:first-name "chris" :last-name "howe-jones"
                                             :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]
-                                            :optional 12.0}])
+                                            :id 12}])
 
   ;; => [{:first-name "chris",
   ;;      :last-name "howe-jones",
