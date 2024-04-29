@@ -49,7 +49,7 @@
       (assoc {} :error  (s/explain-str ::api-spec/person person-decoded))
       (->> person
            (swap! people add-person-with-id)
-           (take 1)))))
+           first))))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here.")

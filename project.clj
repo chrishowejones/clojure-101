@@ -25,15 +25,15 @@
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
-            [lein-asset-minifier "0.2.7"
+            [lein-asset-minifier "0.4.7"
              :exclusions [org.clojure/clojure]]]
 
   :ring {:handler clojure-101.handler/app
-         :uberwar-name "clojure-101.war"}
+         :uberwar-name "clojure101.war"}
 
   :min-lein-version "2.5.0"
 
-  :uberjar-name "clojure-101.jar"
+  :uberjar-name "clojure101.jar"
 
   :main clojure-101.server
 
@@ -45,9 +45,7 @@
   :source-paths ["src/clj" "src/cljc"]
   :resource-paths ["resources" "target/cljsbuild"]
 
-  :minify-assets
-  {:assets
-   {"resources/public/css/site.min.css" "resources/public/css/site.css"}}
+  :minify-assets [[:css {:source "resources/public/css/site.css" :target "resources/public/css/site.min.css"}]]
 
   :cljsbuild
   {:builds {:min
@@ -116,9 +114,9 @@
                    :plugins [[lein-figwheel "0.5.20"]
                              #_[cider/cider-nrepl "0.10.0-SNAPSHOT"]
                              #_[org.clojure/tools.namespace "0.3.0-alpha2"
-                              :exclusions [org.clojure/tools.reader]]
+                                :exclusions [org.clojure/tools.reader]]
                              #_[refactor-nrepl "2.0.0-SNAPSHOT"
-                              :exclusions [org.clojure/clojure]]
+                                :exclusions [org.clojure/clojure]]
                              ]
 
                    :injections [(require 'pjstadig.humane-test-output)
