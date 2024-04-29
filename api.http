@@ -21,3 +21,9 @@ Content-Type: application/json
 
 { "first-name":"Steve", "last-name": "Hobbs","films":[{"title":"Dune","studio":"Legendary","release-year":"2021"},
 {"title":"Star Wars Rogue One", "studio":"Disney", "release-year":"2015"}]}
+
+# POST add films
+POST http://localhost:3000/api/people/4/films
+Content-Type: application/json
+
+{"films":[{"title":"Dune2","studio":"Legendary","release-year":"2024"}]}

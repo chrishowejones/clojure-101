@@ -51,6 +51,22 @@
            (swap! people add-person-with-id)
            first))))
 
+(defn- overwrite-films
+  [people id films]
+  (let [person (first (filter #(= id (:id %)) people))
+        person-films-replaced (assoc person :films films)]
+    (-> (remove #(= id (:id %)) people)
+        (conj person-films-replaced))))
+
+(defn add-films
+  "Accepts the people atom, the id of a person and map representing the films to be added to that person (replacing any existing films).
+   Returns Person with films or returns error map if Films is illegal spec."
+  [people id films-unvalidated]
+  (let [films (s/conform ::api-spec/films (:films films-unvalidated))]
+    (if (s/invalid? films)
+      (assoc {} :error (s/explain-str ::api-spec/films (:films films-unvalidated)))
+      (swap! people overwrite-films id films))))
+
 (defroutes routes
   (GET "/" [] "add some links to routes here.")
   (GET "/people" [] (-> @people
@@ -60,6 +76,13 @@
                                 most-popular-studio
                                 response
                                 (content-type "application/json")))
+  (POST "/people/:id/films" [id :as req]
+    (let [films (-> req :body slurp (json/decode true))]
+      (-> people
+          (add-films (read-string id) films)
+          response
+          (status 201)
+          (content-type "application/json"))))
   (POST "/people" req
     (let [person-json (-> req :body slurp)]
       (-> (response (add-person people (json/decode person-json true)))
