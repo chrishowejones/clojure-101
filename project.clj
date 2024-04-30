@@ -21,7 +21,8 @@
                  [cheshire "5.8.0"]
                  [org.clojure/core.logic "0.8.11"
                   :exclusions [org.clojure/clojure]]
-                 [org.clojure/spec.alpha "0.2.168"]]
+                 [org.clojure/spec.alpha "0.2.168"]
+                 [nrepl/nrepl "0.8.3"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
@@ -104,7 +105,6 @@
                                   [ring/ring-devel "1.6.2"]
                                   [prone "1.1.4"]
                                   [figwheel-sidecar "0.5.20"]
-                                  [nrepl/nrepl "0.8.3"]
                                   [cider/piggieback "0.5.3"]
                                   [devcards "0.2.3" :exclusions [cljsjs/react]]
                                   [pjstadig/humane-test-output "0.8.3"]
