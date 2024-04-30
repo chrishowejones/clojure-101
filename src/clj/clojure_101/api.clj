@@ -61,10 +61,10 @@
                                 response
                                 (content-type "application/json")))
   (POST "/people" req
-    (let [person-json (-> req :body slurp)]
-      (-> (response (add-person people (json/decode person-json true)))
-          (status 201)
-          (content-type "application/json")))))
+        (let [person-json (-> req :body slurp)]
+          (-> (response (add-person people (json/decode person-json true)))
+              (status 201)
+              (content-type "application/json")))))
 
 (comment
 
