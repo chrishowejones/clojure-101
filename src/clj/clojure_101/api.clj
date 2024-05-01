@@ -185,10 +185,10 @@
   people2
 
   (add-person people {:first-name "Jonny" :last-name "Hobbs"})
-  (swap! people first)
+  (swap! people #(conj [] (first %)))
   @people
 
-  (reset! people (json/decode people-json true))
+  (reset! people (into [] (json/decode people-json true)))
 
   (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])) [{:studio ""} 0] {})
 
