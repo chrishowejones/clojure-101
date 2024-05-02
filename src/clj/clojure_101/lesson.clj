@@ -12,7 +12,7 @@
 ;; accessing lists (and sequences)
 (first (list 1 2 3))
 (second (list 1 2 3))
-(nth (list 1 2 3) 1)
+(nth (list 1 2 3) 2)
 
 
 ;; the first item in every list is a function!

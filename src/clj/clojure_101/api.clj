@@ -9,7 +9,7 @@
 (def people-json
   "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
   \"films\": [
-  {\"title\":\"Star Wars: Episode IV – A New Hope\",\"studio\":\"20th Century Fox\",\"release-year\":\"1977\"},
+  {\"title\":\"Star Wars: Episode IV - A New Hope\",\"studio\":\"20th Century Fox\",\"release-year\":\"1977\"},
   {\"title\":\"Raiders of the Lost Ark\",\"studio\":\"Paramount\",\"release-year\":\"1981\"},
   {\"title\":\"The Godfather\",\"studio\":\"Paramount\",\"release-year\":\"1972\"}
   ]},
@@ -25,7 +25,7 @@
 (def people (atom (json/decode people-json true)))
 
 (defn most-popular-studio
-  "takes in map of people, extracts films and within that studio then determines
+  "Takes in map of people, extracts films and within that studio then determines
    frequencies and extracts max before turning into json string"
   [people-decoded]
   (let [people (s/conform ::api-spec/people people-decoded)]
@@ -70,129 +70,16 @@
 
   @people
 
-  (s/conform ::api-spec/people [{:first-name "Cerys" :last-name "howe-jones" :id 1
-                                 :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]}])
-  ;; => [{:first-name "Cerys",
-  ;;      :last-name "howe-jones",
-  ;;      :films
-  ;;      [{:title "A new hope", :studio "Paramount", :release-year "1977"}]}]
 
-  (s/explain-str :clojure-101.api-spec/person
-                 (json/decode
-                  "{
-                 \"first-name\": \"Fiona\",
-                 \"last-name\": \"Hobbs\",
-                 \"films\": [
-                           {
-                            \"title\": \"Toy Story\",
-                            \"studio\": \"Pixar\",
-                            \"release-year\": \"1996\"
-                            },
-                           {
-                            \"title\": \"Fifty Shades of Grey\",
-                            \"studio\": \"Paramount\",
-                            \"release-year\": \"2015\"
-                            }
-                           ]
-                 }" true))
-  ;; => "Success!\n"
-
-  (def people-map (json/decode people-json true))
-  people-map
-  ;; => ({:first-name "Chris",
-  ;;      :last-name "Howe-Jones",
-  ;;      :films
-  ;;      [{:title "Star Wars: Episode IV – A New Hope",
-  ;;        :studio "20th Century Fox",
-  ;;        :release-year "1977"}
-  ;;       {:title "Raiders of the Lost Ark",
-  ;;        :studio "Paramount",
-  ;;        :release-year "1981"}
-  ;;       {:title "The Godfather",
-  ;;        :studio "Paramount",
-  ;;        :release-year "1972"}]}
-  ;;     {:first-name "Cerys",
-  ;;      :middle-name "Eilonwy",
-  ;;      :last-name "Howe-Jones",
-  ;;      :films
-  ;;      [{:title "Bambi", :studio "Disney", :release-year "1942"}
-  ;;       {:title "Despicable Me",
-  ;;        :studio "Universal",
-  ;;        :release-year "2010"}
-  ;;       {:title "Truman Show",
-  ;;        :studio "Paramount",
-  ;;        :release-year "1998"}]}
-  ;;     {:first-name "Danielle", :last-name "Howe-Jones", :nickname "Dan"})
-
-  ;; get nickname
-  (sequence
-   (comp (map :nickname)
-         (filter (complement nil?)))
-   people-map)
-
-  ;; get films
-  (mapcat :films people-map)
-
-  ;; then get studio for each
-  (->> people-map
-       (mapcat :films)
-       (map :studio))
-
-
-
-  ;; then determine number of occurances of each film
-  (->> people-map
-       (mapcat :films)
-       (map :studio)
-       frequencies)
-
-  ;; then reduce over collection to get max occurance
-  (->> people-map
-       (mapcat :films)
-       (map :studio)
-       frequencies
-       (reduce (fn [[max-studio max-value] [studio value]]
-                 (if (< max-value value)
-                   [studio value]
-                   [max-studio max-value]))))
-
-  ;; then convert to json string
-  (->> people-map
-       (mapcat :films)
-       (map :studio)
-       frequencies
-       (reduce (fn [[max-studio max-value] [studio value]]
-                 (if (< max-value value)
-                   [studio value]
-                   [max-studio max-value])))
-       json/encode)
-
-  (->> people-map
-       (sequence (comp (mapcat :films)
-                       (map :studio)))
-       frequencies
-       (reduce
-        (fn [[_ max-value :as max]  [_ value :as curr]]
-          (if (< max-value value)
-            curr
-            max)))
-       json/encode)
-
-  (most-popular-studio people-map)
-  (def people2 (atom []))
-  (add-person people2 {:first-name "Dexter" :last-name "Howe-Jones"})
-
-  people2
-
-  (add-person people {:first-name "Jonny" :last-name "Hobbs"})
-  (swap! people #(conj [] (first %)))
-  @people
+  (add-person people {:first-name "Jonny" :last-name "Hobbs" :films [{:title "Toy Story" :release-year "1995" :studio "Disney"}]})
 
   (reset! people (into [] (json/decode people-json true)))
 
-  (reduce (fn [[mk mv] [k v]] (if (< mv v) [k v] [mk mv])) [{:studio ""} 0] {})
+  (frequencies ["fred" "fred" "bill" "chris" "fred"])
 
-  (frequencies
-   [{:studio "fred"} {:studio "fred"}])
+  (-> @people
+      most-popular-studio
+      response
+      (content-type "application/json"))
 
   )
