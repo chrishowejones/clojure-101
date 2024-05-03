@@ -53,23 +53,24 @@
 
 (defroutes routes
   (GET "/" [] "add some links to routes here.")
-  (GET "/people" [] (-> @people
-                        response
-                        (content-type "application/json")))
-  (GET "/popular-studio" [] (-> @people
-                                most-popular-studio
-                                response
-                                (content-type "application/json")))
+  (GET "/people" []
+    (-> @people
+        response
+        (content-type "application/json")))
+  (GET "/popular-studio" []
+    (-> @people
+        most-popular-studio
+        response
+        (content-type "application/json")))
   (POST "/people" req
-        (let [person-json (-> req :body slurp)]
-          (-> (response (add-person people (json/decode person-json true)))
-              (status 201)
-              (content-type "application/json")))))
+    (let [person-json (-> req :body slurp)]
+      (-> (response (add-person people (json/decode person-json true)))
+          (status 201)
+          (content-type "application/json")))))
 
 (comment
 
   @people
-
 
   (add-person people {:first-name "Jonny" :last-name "Hobbs" :films [{:title "Toy Story" :release-year "1995" :studio "Disney"}]})
 
