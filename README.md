@@ -53,11 +53,11 @@ run or deployed in any environment with a Java Runtime Environment
 
 Once compiled into an uberjar you can run the project using:
 
-     $ java -jar <location of uberjar>/clojure-101.jar
+     $ java -jar <location of uberjar>/clojure101.jar
 
 E.g. from the target directory the uberjar compiles too:
 
-     $ java -jar target/clojure-101.jar
+     $ java -jar target/clojurem101.jar
 
 When built as an uberjar you can access the UI using the URL -
 http://localhost:3000/
