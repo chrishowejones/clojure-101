@@ -57,51 +57,53 @@ me
 ;; (me-nil :name)
 
 ;;(1 {:a 1 :name "Chris" 1 2})
-;; => ClassCastException class java.lang.Long cannot be cast to class clojure.lang.IFn (java.lang.Long is in module java.base of loader 'bootstrap'; clojure.lang.IFn is in unnamed module of loader 'app')  clojure-101.lesson/eval19782 (form-init17792907167632930503.clj:45)
 
 ;; sets
 #{1 2 3}
-;; => #{1 3 2}
+(set [1 1 2 2 3])
 ;; #{1 2 3 1}
-;; => IllegalArgumentException Duplicate key: 1  clojure.lang.PersistentHashSet.createWithCheck (PersistentHashSet.java:68)
-#{"1" 2 "Chris"}
-;; => #{2 "Chris" "1"}
 
+#{"1" 2 "Chris" 1}
 
 ;; let scope
-(let [name "Chris"]
-  (string/upper-case name))
-;; => "CHRIS"
+(let [first-name "Chris"]
+  (string/upper-case first-name))
 
 
 ;; conditionals
 ;; if
 (if nil "true" "false")
-;; => "false"
+
 (if false "true" "false")
-;; => "false"
+
 (if 0 "true" "false")
-;; => "true"
+
 (if true "true" "false")
-;; => "true"
+
 (if [] "true" "false")
-;; => "true"
+
 
 ;; cond
 (cond
-  (< 2 1) "1 is less than 2"
+  (< 1 2) "1 is less than 2"
   (> 1 2) "1 is greater than 2"
   :else "else")
-;; => "1 is less than 2"
 
 ;; def and immutablility
 (def a 1)
-
 a
 (let [a 2]
   a)
 a
 
+;; fns
+(def my-str (fn [x] (str x)))
+(my-str 123)
+
+(defn my-str2 [x] (str x))
+(my-str2 123)
+
+;; more immutability
 (def nums [1 2 3])
 
 nums
