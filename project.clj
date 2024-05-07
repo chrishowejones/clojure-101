@@ -22,7 +22,8 @@
                  [org.clojure/core.logic "0.8.11"
                   :exclusions [org.clojure/clojure]]
                  [org.clojure/spec.alpha "0.2.168"]
-                 [nrepl/nrepl "0.8.3"]]
+                 [nrepl/nrepl "0.8.3"]
+                 [org.clojure/core.async "1.6.681"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
