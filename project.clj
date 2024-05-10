@@ -44,6 +44,7 @@
    [:cljsbuild :builds :app :compiler :output-to]]
 
   :source-paths ["src/clj" "src/cljc"]
+  :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
 
   :minify-assets [[:css {:source "resources/public/css/site.css" :target "resources/public/css/site.min.css"}]]
@@ -111,13 +112,7 @@
                                   ]
 
                    :source-paths ["src/cljs" "env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.20"]
-                             #_[cider/cider-nrepl "0.10.0-SNAPSHOT"]
-                             #_[org.clojure/tools.namespace "0.3.0-alpha2"
-                                :exclusions [org.clojure/tools.reader]]
-                             #_[refactor-nrepl "2.0.0-SNAPSHOT"
-                                :exclusions [org.clojure/clojure]]
-                             ]
+                   :plugins [[lein-figwheel "0.5.20"]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
