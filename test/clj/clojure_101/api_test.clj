@@ -6,13 +6,13 @@
 (deftest add-person
   (let [people (atom [])]
    (testing "Add a valid person and ensure they're present"
-     (is (= {:first-name "Fred" :last-name "Bloggs"}
+     (is (= {:first-name "Fred" :last-name "Bloggs" :id 1}
             (api/add-person people {:first-name "Fred" :last-name "Bloggs"})))
-     (is (= [{:first-name "Fred" :last-name "Bloggs"}]
+     (is (= [{:first-name "Fred" :last-name "Bloggs" :id 1}]
             @people)))
    (testing "Add an invalid person and ensure they fail"
-     (is (= {:error "val: {:first-name \"Fred\"} fails spec: :clojure-101.api-spec/person predicate: (contains? % :last-name)
-"}
+     (is (= {:error
+             "val: {:first-name \"Fred\"} fails spec: :clojure-101.api-spec/person predicate: (contains? % :last-name)\n"}
             (api/add-person people {:first-name "Fred"}))))))
 
 (deftest popular-studio
