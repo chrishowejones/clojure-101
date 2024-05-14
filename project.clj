@@ -105,14 +105,17 @@
                                   [ring/ring-mock "0.3.1"]
                                   [ring/ring-devel "1.6.2"]
                                   [prone "1.1.4"]
-                                  [figwheel-sidecar "0.5.20"]
+                                  [figwheel-sidecar "0.5.20"
+                                   :exclusions [net.java.dev.jna/jna]]
+                                  [net.java.dev.jna/jna "5.14.0"]
                                   [cider/piggieback "0.5.3"]
                                   [devcards "0.2.3" :exclusions [cljsjs/react]]
                                   [pjstadig/humane-test-output "0.8.3"]
                                   ]
 
                    :source-paths ["src/cljs" "env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.20"]]
+                   :plugins [[lein-figwheel "0.5.20"
+                              :exclusions [net.java.dev.jna/jna]]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
