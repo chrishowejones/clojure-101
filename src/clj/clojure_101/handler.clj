@@ -29,7 +29,7 @@
 
 (defroutes routes
   (wrap-api-middleware (context "/api" [] api/routes))
-  (wrap-middleware (GET "/" [] (loading-page)))
+  (wrap-middleware (GET "/*" [] (loading-page)))
   (resources "/")
   (not-found "Not Found"))
 
