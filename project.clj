@@ -89,10 +89,7 @@
   {:http-server-root "public"
    :server-port 3449
    :nrepl-port 7002
-   :nrepl-middleware [cider.piggieback/wrap-cljs-repl
-                      ;; "cider.nrepl/cider-middleware"
-                      ;; "refactor-nrepl.middleware/wrap-refactor"
-                      ]
+   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]
    :css-dirs ["resources/public/css"]
    :ring-handler clojure-101.handler/app}
 

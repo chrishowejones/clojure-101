@@ -27,15 +27,7 @@
      mount-target
      (include-js "/js/app.js")]))
 
-(defn cards-page []
-  (html5
-    (head)
-    [:body
-     mount-target
-     (include-js "/js/app_devcards.js")]))
-
 (defroutes routes
-  (GET "/cards" [] (cards-page))
   (wrap-api-middleware (context "/api" [] api/routes))
   (wrap-middleware (GET "/" [] (loading-page)))
   (resources "/")
