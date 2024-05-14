@@ -39,14 +39,7 @@
 
   (start-server)
 
-  (require 'clojure.inspector)
-
-  (clojure.inspector/inspect @server)
-  (.setStopTimeout @server 3000)
-
-  (.getState @server)
-  (.start @server)
-
+  (stop-server)
 
 
   )
