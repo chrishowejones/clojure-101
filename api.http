@@ -21,3 +21,6 @@ Content-Type: application/json
 
 { "first-name":"Steve", "last-name": "Hobbs","films":[{"title":"Dune","studio":"Legendary","release-year":"2021"},
 {"title":"Star Wars Rogue One", "studio":"Disney", "release-year":"2015"}]}
+
+# GET stuff
+GET http://localhost:3000/api/stuff
