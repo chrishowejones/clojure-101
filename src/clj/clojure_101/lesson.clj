@@ -9,17 +9,16 @@
 (list 1 2 3)
 `(1 2 3)
 
-;; accessing lists (and sequences)
-(first (list 1 2 3))
-(second (list 1 2 3))
-(nth (list 1 2 3) 2)
-
-
 ;; the first item in every list is a function!
 (+ 1 2 3)
 (inc 10)
 (dec 10)
 (str [1 2 3])
+
+;; accessing lists (and sequences)
+(first (list 1 2 3))
+(second (list 1 2 3))
+(nth (list 1 2 3) 2)
 
 ;; strings
 "Chris"
@@ -48,6 +47,7 @@
 (get {:a 1 :name "Chris" 1 2 :z nil} :z :missing)
 ({:a 1 :name "Chris" 1 2} :a)
 (:a {:a 1 :name "Chris" 1 2})
+
 (:name {:a 1 :name "Chris" 1 2})
 (def me {:name "Chris" :title "Jedi"})
 me
@@ -84,10 +84,11 @@ me
 
 
 ;; cond
-(cond
-  (< 1 2) "1 is less than 2"
-  (> 1 2) "1 is greater than 2"
-  :else "else")
+(let [n 1]
+ (cond
+   (< n 2) "n is less than 2"
+   (> n 2) "n is greater than 2"
+   :else "else"))
 
 ;; def and immutablility
 (def a 1)
@@ -115,17 +116,7 @@ nums
 (let [nums (conj nums 4)]
   nums)
 ;; => [1 2 3 4]
+(conj nums 4)
+
 nums
 ;; => [1 2 3]
-
-;; have fn
-((fn [x] (+ x 1)) 10)
-;; => 11
-(def increment (fn [x] (+ x 1)))
-(increment 10)
-;; => 11
-
-(defn increment-again [x]
-  (+ x 1))
-(increment-again 10)
-;; => 11
