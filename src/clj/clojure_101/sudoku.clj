@@ -24,7 +24,7 @@
        (into [])))
 
 (defn get-square
-  "Given rows and the toop left x y coord - return a sequence representing
+  "Given rows and the top left x y coord - return a sequence representing
   a square"
   [rows x y]
   (for [x2 (range x (+ x 3)) y2 (range y (+ y 3))]
@@ -71,12 +71,18 @@
 
   (sudokufd hints)
 
-  {:hints (rows hints)
-   :solution (->> hints
-                  sudokufd
-                  first
-                  rows)}
+  (def solution
+    {:hints (rows hints)
+    :solution (->> hints
+                   sudokufd
+                   first
+                   rows)})
+
+  solution
 
   (get-square (into [] (map vec (partition 9 hints))) 3 3)
+
+  [(:solution solution)
+   (into [] (map vec (partition-all 3 (get-square (:solution solution) 6 0))))]
 
   )
