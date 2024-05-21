@@ -24,6 +24,7 @@
 "Chris"
 (str `chris)
 (str 123)
+(string/upper-case "chris")
 
 ;; vectors
 [1 2 3]
