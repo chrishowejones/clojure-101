@@ -43,7 +43,7 @@
   [people person-decoded]
   (let [person (s/conform ::api-spec/person person-decoded)
         add-person-with-id  (fn [people person]
-                              (let [id (inc (apply max (conj (map :id people) 0)))]
+                              (let [id (inc (apply max (into [0] (map :id people))))]
                                 (conj people (assoc person :id id))))]
     (if (s/invalid? person)
       (assoc {} :error  (s/explain-str ::api-spec/person person-decoded))
