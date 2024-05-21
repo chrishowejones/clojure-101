@@ -31,6 +31,8 @@
 (vector 1 2 3)
 (vec (list 1 2 3))
 (vec {:a 1 :b 2})
+(get [1 2 3 4 5] 3)
+([1 2 3 4 5] 3)
 
 ;; keywords
 :a
