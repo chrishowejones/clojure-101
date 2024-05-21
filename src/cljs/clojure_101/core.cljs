@@ -14,6 +14,7 @@
 
 (defn about-page []
   [:div [:h2 "About clojure-101"]
+   [:div [:p "This is a simple reagent app and a RESTful API in Clojure."]]
    [:div [:a {:href "/"} "go to the home page"]]])
 
 ;; -------------------------
@@ -57,7 +58,5 @@
   (reset! page #'home-page)
   (reset! page #'about-page)
   (reset! page #'ttt/tic-tac-toe)
-
-
 
   )
