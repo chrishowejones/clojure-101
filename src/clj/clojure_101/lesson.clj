@@ -1,5 +1,6 @@
 (ns clojure-101.lesson
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [clojure.string :as str]))
 
 ;; number literals
 1
@@ -120,3 +121,75 @@ nums
 
 nums
 ;; => [1 2 3]
+
+(defn fib-seq
+  "Returns a lazy sequence of Fibonacci numbers"
+  ([]
+   (fib-seq 0 1))
+  ([a b]
+   (lazy-seq
+    (cons b (fib-seq b (+ a b))))))
+
+(defn fill-with
+  "Returns a sequence of values starting of size n, defaults to 1"
+  ([v]
+   (fill-with v 1 1 '()))
+  ([v n]
+   (fill-with v n 1 '()))
+  ([v n count col]
+   (println "Generated:" count)
+   (if (<= n 0)
+     col
+     (cons v (fill-with v (dec n) (inc count) col)))))
+
+(fill-with "a" 100)
+
+(defn fill-with-lazy
+  "Returns a lazy sequence of values."
+  ([v]
+   (fill-with-lazy v 0 '()))
+  ([v n col]
+   (println "Generated:" n)
+   (lazy-seq
+    (cons v (fill-with-lazy v (inc n) col)))))
+
+(reduce (fn [[col n] x]
+          (if (<= n 0)
+            (reduced col)
+            [(conj col (str/upper-case x)) (dec n)]))
+        [[] 10]
+        (fill-with-lazy "a"))
+
+(reduce (fn [[col] n] [(conj col n)]) [[]] (range 10))
+
+(let [[col n] [[] 10]]
+  (conj col n))
+
+(reduce (fn [[col n] x]
+          (if (<= n 0)
+            (reduced col)
+            [(conj col (str/upper-case x)) (dec n)]))
+        [[] 3]
+        ["a""a""a""a""a""a""a""a""a"])
+
+(take 10 (repeat "a"))
+
+(take 10 (fill-with-lazy "a"))
+
+(reduce
+ (fn [[col n] x]
+   (if (<= n 0)
+     (reduced col)
+     [(conj col (str/upper-case x)) (dec n)]))
+ [[] 3]
+ ["a" "a" "a" "a" "a"])
+
+(reduce
+ (fn [[col n] x]
+   (if (<= n 0)
+     (reduced col)
+     [(conj col (str/upper-case x)) (dec n)]))
+ [[] 3]
+ ["a" "a" "a" "a" "a"])
+
+(take 33 (map (fn [n] (println "n=" n) n) (range 100)))
