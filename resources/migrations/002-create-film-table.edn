@@ -1,0 +1,9 @@
+;; Create film table
+{:up ["CREATE TABLE film (
+       id serial PRIMARY KEY,
+       person_id integer REFERENCES person (id),
+       title varchar(250),
+       studio varchar(250),
+       release_year varchar(4)
+       );"]
+ :down ["DROP TABLE film;"]}

@@ -1,0 +1,84 @@
+* Set up postgres database in Docker
+
+First you need to install docker and then you can pull a postgresql image.
+
+** Login to docker and pull postgres image
+
+You will need an account on [[https://hub.docker.com/][Docker hub]].
+
+Then you need to login and pull a postges docker image.
+
+#+begin_src sh
+docker login
+docker pull postgres
+#+end_src
+
+
+** Run initial database container
+
+   You then need to create a new docker container from the postgres image.
+
+   We will call this container 'clojure101-postgres'.
+
+    #+begin_src sh
+    docker run --name clojure101-postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres
+    #+end_src
+
+    That command will run up a container called 'clojure101-postgres' that listens on port 5432 and has a root password of
+    'password' (the root user is defaulted to 'postgres').
+
+** Create the clojure101 user and database
+
+   To create the user and database we will use you will need to connect to the container and run the create user and
+   database commands below.
+
+   You have a choice about how to connect to the running postgres container.
+       - You can use a database UI tool like DBeaver or an appropriate plugin for your IDE.
+       - You can use the PSQL command line
+       - If you have emacs you can excute the scripts in this file directly in your editor using org-babel mode (usually you
+         place your cursor at the end of the src block and press 'C-c C-c').
+
+*** Connecting using PSQL
+
+    To connect to the running container using PSQL use the following command.
+
+     #+begin_src sh
+  docker exec -it clojure101-postgres psql -U postgres
+    #+end_src
+
+*** Create user and database
+
+     Then we can execute the following commands.
+
+     #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "password" :dbuser "postgres"
+  CREATE USER clojure101 WITH PASSWORD 'clojure101';
+     #+end_src
+
+     #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "password" :dbuser "postgres"
+  CREATE DATABASE clojure101 WITH OWNER clojure101;
+    #+end_src
+
+    We can test if the database and user are working by logging on to the database with the new user. So in PSQL:
+
+    #+begin_src sh
+  docker exec -it clojure101-postgres psql -U clojure101 -d clojure101
+    #+end_src
+
+     #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "clojure101" :dbuser "clojure101" :database "clojure101"
+  SELECT now();
+    #+end_src
+
+*** Run migrations from leiningen
+
+    Once you have a docker container running on port 5432 with the clojure101 database and user created you can run the
+    database migrations from lein.
+
+    #+begin_src sh
+  lein migrate
+    #+end_src
+
+    If you need to rollback all the migrations you can run.
+
+    #+begin_src sh
+  lein rollback
+    #+end_src

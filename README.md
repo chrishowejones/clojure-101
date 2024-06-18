@@ -19,6 +19,13 @@ There are 3 distinct parts to the project.
 Clojure the language is downloaded as a dependency for this project
 therefore only Java 1.7+ and Leiningen (https://leiningen.org/) need to be pre-installed.
 
+## Set up database
+
+This project is dependent on postgresql and the easiest way to run it is in docker so you will need to install docker
+locally.
+
+See [Set up database](./set-database.org).
+
 ## Usage
 
 You can run the project in development mode using the Leiningen build

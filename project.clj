@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [ring-server "0.5.0"]
                  [reagent "0.7.0"]
                  [reagent-utils "0.2.1"]
@@ -22,7 +22,12 @@
                  [org.clojure/core.logic "0.8.11"
                   :exclusions [org.clojure/clojure]]
                  [org.clojure/spec.alpha "0.2.168"]
-                 [nrepl/nrepl "1.0.0"]]
+                 [nrepl/nrepl "1.0.0"]
+                 [com.github.seancorfield/next.jdbc "1.3.939"]
+                 [org.postgresql/postgresql "42.7.3"]
+                 [com.zaxxer/HikariCP "5.1.0"]
+                 [org.slf4j/slf4j-log4j12 "2.0.13"]
+                 [dev.weavejester/ragtime "0.9.4"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
@@ -93,7 +98,8 @@
    :css-dirs ["resources/public/css"]
    :ring-handler clojure-101.handler/app}
 
-
+  :aliases {"migrate"  ["run" "-m" "clojure-101.repl/migrate"]
+            "rollback" ["run" "-m" "clojure-101.repl/rollback"]}
 
   :profiles {:dev {:repl-options {:init-ns clojure-101.repl
                                   :nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
