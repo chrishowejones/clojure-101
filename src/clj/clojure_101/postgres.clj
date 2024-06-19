@@ -24,6 +24,16 @@
   [ds person-id]
   (sql/query ds ["select title, studio, release_year from film where person_id = ?" person-id]))
 
+(defn find-popular-studio
+  [ds]
+  (sql/query ds ["select studio, count
+                  from
+                  (select studio, count(studio) as count
+                  from film
+                  group by studio
+                  order by count desc) as studiocount
+                  limit 1"]))
+
 (comment
 
   (def db-spec {:dbtype "postgresql"
@@ -33,9 +43,16 @@
                 :password "clojure101"})
   (def ds (jdbc/with-options (jdbc/get-datasource db-spec) next.jdbc/unqualified-snake-kebab-opts))
 
+  (find-popular-studio ds)
+
+  (find-all-people ds)
+
   (create-person ds {:first-name "Chris" :last-name "Howe-Jones"})
 
-  (sql/query ds ["select * from person"])
+  (sql/query ds ["select studio, count(studio) as count
+                  from film
+                  group by studio
+                  order by count desc"])
 
   (create-films-for-person ds 1 [{:title "Star Wars: Episode IV - A New Hope",
                                   :studio "20th Century Fox",

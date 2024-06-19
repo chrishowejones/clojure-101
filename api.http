@@ -16,11 +16,20 @@ Content-Type: application/json
 {"title":"Fifty Shades of Grey", "studio":"Paramount", "release-year":"2015"}]}
 
 # POST another person
-POST http://localhost:3000/api/people
+POST http://localhost:3000/api/peopledb
 Content-Type: application/json
 
 { "first-name":"Steve", "last-name": "Hobbs","films":[{"title":"Dune","studio":"Legendary","release-year":"2021"},
 {"title":"Star Wars Rogue One", "studio":"Disney", "release-year":"2015"}]}
+
+# POST cerys
+POST http://localhost:3000/api/peopledb
+Content-Type: application/json
+
+{ "first-name":"Cery", "last-name": "Howe-Jones","films":
+[{"title": "Truman Show", "studio": "Paramount", "release-year": "1998"},
+ {"title": "Elemental", "studio": "Disney", "release-year": "2023"},
+ {"title": "Up", "studio": "Disney", "release-year": "2009"}]}
 
 # GET stuff
 GET http://localhost:3000/api/stuff

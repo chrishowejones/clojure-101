@@ -39,6 +39,9 @@
          (zipmap [:studio :count])
          json/generate-string)))
 
+(defn most-popular-studio-db [ds]
+  (json/generate-string (postgres/find-popular-studio ds)))
+
 (defn add-person
   "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
   [people unvalidated-person]
@@ -94,6 +97,10 @@
   (GET "/popular-studio" []
     (-> @people
         most-popular-studio
+        response
+        (content-type "application/json")))
+  (GET "/popular-studio-db" {ds :ds}
+    (-> (most-popular-studio-db ds)
         response
         (content-type "application/json")))
   (POST "/people" req

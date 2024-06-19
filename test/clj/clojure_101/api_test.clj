@@ -92,3 +92,10 @@
                 :first-name "Joe" :last-name "Smith"
                 :films [{:title "another film" :studio "another studio" :release-year "1990"}]}]}
              (api/get-all-people nil))))))
+
+(deftest popular-studio-db
+  (testing "Check most popular studio returned from database"
+    (with-redefs [postgres/find-popular-studio (fn [_]
+                                                 {:studio "studio1" :count 1})]
+     (is (= "{\"studio\":\"studio1\",\"count\":1}"
+            (api/most-popular-studio-db nil))))))
