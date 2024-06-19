@@ -4,7 +4,8 @@
    [clojure-101.api-spec :as api-spec]
    [clojure.spec.alpha :as s]
    [compojure.core :refer [defroutes GET POST]]
-   [ring.util.response :refer [content-type response status]]))
+   [ring.util.response :refer [content-type response status]]
+   [clojure-101.postgres :as postgres]))
 
 (def people-json
   "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -40,16 +41,47 @@
 
 (defn add-person
   "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
-  [people person-decoded]
-  (let [person (s/conform ::api-spec/person person-decoded)
+  [people unvalidated-person]
+  (let [person (s/conform ::api-spec/person unvalidated-person)
         add-person-with-id  (fn [people person]
                               (let [id (inc (apply max (into [0] (map :id people))))]
                                 (conj people (assoc person :id id))))]
     (if (s/invalid? person)
-      (assoc {} :error  (s/explain-str ::api-spec/person person-decoded))
+      (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
       (->> person
            (swap! people add-person-with-id)
            first))))
+
+(defn find-films-for-people
+  [people ds]
+  (letfn [(get-films-for-person [person]
+            (->> person
+                 :id
+                 (postgres/find-films-for-person ds)
+                 (assoc person :films)))]
+    (map get-films-for-person people)))
+
+(defn get-all-people
+  [{ds :ds}]
+  (-> (postgres/find-all-people ds)
+      (find-films-for-people ds)
+      response
+      (content-type "application/json")))
+
+(defn add-person-to-db [ds unvalidated-person]
+  (let [person (s/conform ::api-spec/person unvalidated-person)]
+    (if (s/invalid? person)
+      (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
+      (let [person-minus-films (dissoc person :films)
+            films (:films person)
+            person-in-db (postgres/create-person ds person-minus-films)
+            assoc-films (fn [films] (if (seq films)
+                                      (assoc person-in-db :films films)
+                                      person-in-db))]
+        (->> films
+             (postgres/create-films-for-person ds (:id person-in-db))
+             (map #(dissoc % :id :person-id))
+             assoc-films)))))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here.")
@@ -57,6 +89,8 @@
     (-> @people
         response
         (content-type "application/json")))
+  (GET "/peopledb" req
+    (get-all-people req))
   (GET "/popular-studio" []
     (-> @people
         most-popular-studio
@@ -65,6 +99,12 @@
   (POST "/people" req
     (let [person-json (-> req :body slurp)]
       (-> (response (add-person people (json/decode person-json true)))
+          (status 201)
+          (content-type "application/json"))))
+  (POST "/peopledb" {ds :ds :as req}
+    (let [person-json (-> req :body slurp)]
+      (-> (add-person-to-db ds (json/decode person-json true))
+          response
           (status 201)
           (content-type "application/json")))))
 

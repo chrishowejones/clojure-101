@@ -4,7 +4,8 @@
             [compojure.core :refer [context defroutes GET]]
             [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
-            [hiccup.page :refer [html5 include-css include-js]]))
+            [hiccup.page :refer [html5 include-css include-js]]
+            [next.jdbc :as jdbc]))
 
 (def mount-target
   [:div#app
@@ -27,8 +28,27 @@
      mount-target
      (include-js "/js/app.js")]))
 
+(def db-spec {:dbtype "postgresql"
+              :dbname "clojure101"
+              :host "localhost"
+              :user "clojure101"
+              :password "clojure101"})
+
+(defn get-datasource []
+  (-> db-spec
+      jdbc/get-datasource
+      (jdbc/with-options next.jdbc/unqualified-snake-kebab-opts)))
+
+(defn wrap-ds [handler]
+  (fn [req]
+    (->> (get-datasource)
+         (assoc req :ds)
+         handler)))
+
 (defroutes routes
-  (wrap-api-middleware (context "/api" [] api/routes))
+  (-> (context "/api" [] api/routes)
+      wrap-ds
+      wrap-api-middleware)
   (wrap-middleware (GET "/*" [] (loading-page)))
   (resources "/")
   (not-found "Not Found"))

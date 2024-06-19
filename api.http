@@ -9,7 +9,7 @@ GET http://localhost:3000/api/people
 GET http://localhost:3000/api/popular-studio
 
 # POST person
-POST http://localhost:3000/api/people
+POST http://localhost:3000/api/peopledb
 Content-Type: application/json
 
 { "first-name":"Fiona", "last-name": "Hobbs","films":[{"title":"Toy Story","studio":"Pixar","release-year":"1996"},
