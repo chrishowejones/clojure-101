@@ -16,10 +16,6 @@
   [ds]
   (sql/query ds ["select * from person"]))
 
-(defn find-person
-  [ds id]
-  (sql/query ds ["select * from "]))
-
 (defn find-films-for-person
   [ds person-id]
   (sql/query ds ["select title, studio, release_year from film where person_id = ?" person-id]))
