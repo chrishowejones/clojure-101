@@ -40,7 +40,10 @@
          json/generate-string)))
 
 (defn most-popular-studio-db [ds]
-  (json/generate-string (postgres/find-popular-studio ds)))
+  (-> ds
+      postgres/find-popular-studio
+      first
+      json/generate-string))
 
 (defn add-person
   "Accepts a map representing a Person and stores it. Returns Person or returns error map if Person is illegal spec."
