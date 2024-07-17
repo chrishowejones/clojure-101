@@ -24,8 +24,10 @@ therefore only Java 1.7+ and Leiningen (https://leiningen.org/) need to be pre-i
 This project is dependent on postgresql and the easiest way to run it is in docker so you will need to install docker
 locally.
 
-See [Set up database](./set-database.org).
+See [Set up database](./set-up-database.org).
 
+
+ 
 ## Usage
 
 You can run the project in development mode using the Leiningen build

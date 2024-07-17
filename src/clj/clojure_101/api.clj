@@ -122,6 +122,38 @@
 
   @people
 
+  (def people-test [{:id 1,
+                     :first-name "Chris",
+                     :last-name "Howe-Jones",
+                     :films
+                     [{:title "Star Wars: Episode IV - A New Hope",
+                       :studio "20th Century Fox",
+                       :release-year "1977"}
+                      {:title "Raiders of the Lost Ark",
+                       :studio "Paramount",
+                       :release-year "1981"}
+                      {:title "The Godfather",
+                       :studio "Paramount",
+                       :release-year "1972"}]}
+                    {:id 2,
+                     :first-name "Cerys",
+                     :middle-name "Eilonwy",
+                     :last-name "Howe-Jones",
+                     :films
+                     [{:title "Truman Show", :studio "Paramount", :release-year "1998"}
+                      {:title "Elemental", :studio "Disney", :release-year "2023"}
+                      {:title "Up", :studio "Disney", :release-year "2009"}
+                      {:title "Cinderella", :studio "Disney", :release-year "1950"}]}
+                    {:id 3,
+                     :first-name "Danielle",
+                     :last-name "Howe-Jones",
+                     :nickname "Dan"}])
+
+  (remove #(= 1 (:id %)) people-test)
+
+  (swap! people (fn [people] (remove #(= 1 (:id %)) people-test)))
+
+
   (add-person people {:first-name "Jonny" :last-name "Hobbs" :films [{:title "Toy Story" :release-year "1995" :studio "Disney"}]})
 
   (reset! people (into [] (json/decode people-json true)))

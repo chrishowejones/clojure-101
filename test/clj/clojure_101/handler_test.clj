@@ -87,7 +87,12 @@
 
 (deftest check-popular-studio-db-handler
   (with-redefs [postgres/find-popular-studio (fn [_]
-                                               {:studio "Paramount" :count 3})]
+                                               [{:studio "Paramount" :count 3}])]
     (let [response-body (-> (request :get "/api/popular-studio-db") app :body)]
       (is (= "{\"studio\":\"Paramount\",\"count\":3}"
+             response-body))))
+  (with-redefs [postgres/find-popular-studio (fn [_]
+                                               [])]
+    (let [response-body (-> (request :get "/api/popular-studio-db") app :body)]
+      (is (= "null"
              response-body)))))

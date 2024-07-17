@@ -5,7 +5,7 @@
 
 (defn- get-winner-name
   [turn]
-  (if-let [winner (turn/get-winner turn)]
+  (when-let [winner (turn/get-winner turn)]
     (s/capitalize (name winner))))
 
 (defn get-title
@@ -16,10 +16,4 @@
       "Draw game"
       "Tic Tac Toe")))
 
-(comment
 
-  (get-winner-name @clojure-101.tictactoe.store/current-turn)
-
-
-
-  )
