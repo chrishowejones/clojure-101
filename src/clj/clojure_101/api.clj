@@ -74,15 +74,20 @@
       response
       (content-type "application/json")))
 
-(defn create-person [store-new-person store-new-films unvalidated-person]
+(defn create-person
+  "Create a new person. Takes a map representing an unvalidated person, a function to store a new person and a function to store new films for a person.
+   Returns a map representing the newly stored person with their films."
+  [unvalidated-person store-new-person store-new-films]
   (let [person (s/conform ::api-spec/person unvalidated-person)]
     (if (s/invalid? person)
       (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
       (database/create-person store-new-person store-new-films person))))
 
 (defn post-person
+  "Takes a json string representing a person and their films, a function to store a new person and a function to store new films for that person.
+   Returns an HTTP response with a body containing the newly stored person with films or an error."
   [person-json store-new-person store-new-films]
-  (let [new-person (create-person store-new-person store-new-films (json/decode person-json true))
+  (let [new-person (create-person (json/decode person-json true) store-new-person store-new-films)
         wrap-person-in-response (fn [status-code] (-> new-person
                                                       response
                                                       (status status-code)

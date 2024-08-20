@@ -49,12 +49,14 @@
 
 (deftest add-person-to-db
   (testing "Add a person using the database"
-    (let [person-no-films (api/create-person identity identity  {:first-name "Fred" :last-name "Bloggs"})]
+    (let [person-no-films (api/create-person {:first-name "Fred" :last-name "Bloggs"} identity identity)]
       (is (= {:first-name "Fred" :last-name "Bloggs"}
              (dissoc person-no-films :id)))
       (is (uuid? (:id person-no-films))))
-    (let [person-with-films (api/create-person identity identity {:first-name "Fred" :last-name "Bloggs"
-                                                                  :films [{:title "dummy film" :studio "studio" :release-year "2024"}]})]
+    (let [person-with-films (api/create-person {:first-name "Fred" :last-name "Bloggs"
+                                                :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}
+                                               identity
+                                               identity)]
       (is (= {:first-name "Fred" :last-name "Bloggs"
               :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}
              (dissoc person-with-films :id)))
@@ -62,11 +64,13 @@
     (testing "Adding a person with invalid films using the database results in error."
       (is (= {:error
               "val: {:first-name \"Fred\"} fails spec: :clojure-101.api-spec/person predicate: (contains? % :last-name)\n"}
-             (api/create-person nil nil {:first-name "Fred"})))
+             (api/create-person {:first-name "Fred"} nil nil)))
       (is (= {:error
               "In: [:films 0] val: {:title \"title\", :studio \"studio\"} fails spec: :clojure-101.api-spec/film at: [:films] predicate: (contains? % :release-year)\n"}
-             (api/create-person nil nil {:first-name "Fred" :last-name "Bloggs"
-                                         :films [{:title "title" :studio "studio"}]}))))))
+             (api/create-person {:first-name "Fred" :last-name "Bloggs"
+                                 :films [{:title "title" :studio "studio"}]}
+                                nil
+                                nil))))))
 
 (deftest post-person-db
   (testing "Post a new person using the database"
