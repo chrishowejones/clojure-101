@@ -2,7 +2,8 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [clojure-101.api :as api]
-   [clojure-101.postgres :as postgres]))
+   [clojure-101.postgres :as postgres]
+   [cheshire.core :as json]))
 
 (deftest add-person
   (let [people (atom [])]
@@ -48,28 +49,50 @@
 
 (deftest add-person-to-db
   (testing "Add a person using the database"
-    (with-redefs [postgres/create-person (fn [_ person]
-                                           (assoc person :id 1))
-                  postgres/create-films-for-person (fn [_ _ films]
-                                                     films)]
-      (is (= {:first-name "Fred" :last-name "Bloggs" :id 1}
-             (api/add-person-to-db nil {:first-name "Fred" :last-name "Bloggs"})))
-      (is (= {:first-name "Fred" :last-name "Bloggs" :id 1
+    (let [person-no-films (api/create-person identity identity  {:first-name "Fred" :last-name "Bloggs"})]
+      (is (= {:first-name "Fred" :last-name "Bloggs"}
+             (dissoc person-no-films :id)))
+      (is (uuid? (:id person-no-films))))
+    (let [person-with-films (api/create-person identity identity {:first-name "Fred" :last-name "Bloggs"
+                                                                  :films [{:title "dummy film" :studio "studio" :release-year "2024"}]})]
+      (is (= {:first-name "Fred" :last-name "Bloggs"
               :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}
-             (api/add-person-to-db nil {:first-name "Fred" :last-name "Bloggs"
-                                        :films [{:title "dummy film" :studio "studio" :release-year "2024"}]})))))
-  (testing "Adding a person with invalid films using the database results in error."
-    (with-redefs [postgres/create-person (fn [_ person]
-                                           (assoc person :id 1))
-                  postgres/create-films-for-person (fn [_ _ films]
-                                                     films)]
+             (dissoc person-with-films :id)))
+      (is (uuid? (:id person-with-films))))
+    (testing "Adding a person with invalid films using the database results in error."
       (is (= {:error
               "val: {:first-name \"Fred\"} fails spec: :clojure-101.api-spec/person predicate: (contains? % :last-name)\n"}
-             (api/add-person-to-db nil {:first-name "Fred"})))
+             (api/create-person nil nil {:first-name "Fred"})))
       (is (= {:error
               "In: [:films 0] val: {:title \"title\", :studio \"studio\"} fails spec: :clojure-101.api-spec/film at: [:films] predicate: (contains? % :release-year)\n"}
-             (api/add-person-to-db nil {:first-name "Fred" :last-name "Bloggs"
-                                        :films [{:title "title" :studio "studio"}]}))))))
+             (api/create-person nil nil {:first-name "Fred" :last-name "Bloggs"
+                                         :films [{:title "title" :studio "studio"}]}))))))
+
+(deftest post-person-db
+  (testing "Post a new person using the database"
+    (let [person-with-films (api/post-person "{\"first-name\":\"Fred\",\"last-name\":\"Bloggs\",\"films\":[{\"title\":\"dummy film\",\"studio\":\"studio\",\"release-year\":\"2024\"}]}"
+                                             identity
+                                             identity)]
+      (is (= {:status 201
+              :headers {"Content-Type" "application/json"}
+              :body
+              {:first-name "Fred" :last-name "Bloggs"
+               :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}}
+             (update person-with-films :body dissoc :id)))
+      (is (uuid? (get-in person-with-films [:body :id]))))
+    (testing "Adding a person with invalid films using the database results in error."
+      (is (= {:status 500
+              :headers {"Content-Type" "application/json"}
+              :body {:error
+                     "val: {:first-name \"Fred\"} fails spec: :clojure-101.api-spec/person predicate: (contains? % :last-name)\n"}}
+             (api/post-person "{\"first-name\":\"Fred\"}" nil nil)))
+      (is (= {:status 500
+              :headers {"Content-Type" "application/json"}
+              :body {:error
+                     "In: [:films 0] val: {:title \"title\", :studio \"studio\"} fails spec: :clojure-101.api-spec/film at: [:films] predicate: (contains? % :release-year)\n"}}
+             (api/post-person "{\"first-name\":\"Fred\",\"last-name\":\"Bloggs\",\"films\":[{\"title\":\"title\",\"studio\":\"studio\"}]}"
+                              nil
+                              nil))))))
 
 (deftest get-all-people
   (testing "Get all people from database"

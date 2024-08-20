@@ -8,9 +8,8 @@
     (sql/insert! ds :person person)))
 
 (defn create-films-for-person
-  [ds person-id films]
-  (let [films-with-person-id (map #(assoc % :person-id person-id) films)]
-    (sql/insert-multi! ds :film films-with-person-id)))
+  [ds films]
+  (sql/insert-multi! ds :film films))
 
 (defn find-all-people
   [ds]

@@ -1,11 +1,11 @@
 (ns clojure-101.api
-  (:require
-   [cheshire.core :as json]
-   [clojure-101.api-spec :as api-spec]
-   [clojure.spec.alpha :as s]
-   [compojure.core :refer [defroutes GET POST]]
-   [ring.util.response :refer [content-type response status]]
-   [clojure-101.postgres :as postgres]))
+  (:require [cheshire.core :as json]
+            [clojure-101.api-spec :as api-spec]
+            [clojure-101.postgres :as postgres]
+            [clojure.spec.alpha :as s]
+            [compojure.core :refer [defroutes GET POST]]
+            [ring.util.response :refer [content-type response status]]
+            [clojure-101.database :as database]))
 
 (def people-json
   "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -74,20 +74,22 @@
       response
       (content-type "application/json")))
 
-(defn add-person-to-db [ds unvalidated-person]
+(defn create-person [store-new-person store-new-films unvalidated-person]
   (let [person (s/conform ::api-spec/person unvalidated-person)]
     (if (s/invalid? person)
       (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
-      (let [person-minus-films (dissoc person :films)
-            films (:films person)
-            person-in-db (postgres/create-person ds person-minus-films)
-            assoc-films (fn [films] (if (seq films)
-                                      (assoc person-in-db :films films)
-                                      person-in-db))]
-        (->> films
-             (postgres/create-films-for-person ds (:id person-in-db))
-             (map #(dissoc % :id :person-id))
-             assoc-films)))))
+      (database/create-person store-new-person store-new-films person))))
+
+(defn post-person
+  [person-json store-new-person store-new-films]
+  (let [new-person (create-person store-new-person store-new-films (json/decode person-json true))
+        wrap-person-in-response (fn [status-code] (-> new-person
+                                                      response
+                                                      (status status-code)
+                                                      (content-type "application/json")))]
+    (if (:error new-person)
+      (wrap-person-in-response 500)
+      (wrap-person-in-response 201))))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here.")
@@ -112,11 +114,10 @@
           (status 201)
           (content-type "application/json"))))
   (POST "/peopledb" {ds :ds :as req}
-    (let [person-json (-> req :body slurp)]
-      (-> (add-person-to-db ds (json/decode person-json true))
-          response
-          (status 201)
-          (content-type "application/json")))))
+    (let [person-json (-> req :body slurp)
+          store-new-person (partial postgres/create-person ds)
+          store-new-films (partial postgres/create-films-for-person ds)]
+      (post-person store-new-person store-new-films person-json))))
 
 (comment
 
@@ -153,7 +154,6 @@
 
   (swap! people (fn [people] (remove #(= 1 (:id %)) people-test)))
 
-
   (add-person people {:first-name "Jonny" :last-name "Hobbs" :films [{:title "Toy Story" :release-year "1995" :studio "Disney"}]})
 
   (reset! people (into [] (json/decode people-json true)))
@@ -165,4 +165,4 @@
       response
       (content-type "application/json"))
 
-  )
+  (remove (comp not nil?) [nil 1 nil nil 2]))
