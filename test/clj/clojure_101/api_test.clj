@@ -100,15 +100,16 @@
 
 (deftest get-all-people
   (testing "Get all people from database"
-    (with-redefs [postgres/find-all-people (fn [_]
-                                             [{:id 1
-                                               :first-name "Fred" :last-name "Bloggs"}
-                                              {:id 2
-                                               :first-name "Joe" :last-name "Smith"}])
-                  postgres/find-films-for-person (fn [_ person-id]
-                                                   (get {1 [{:title "dummy film" :studio "studio" :release-year "2024"}]
-                                                         2 [{:title "another film" :studio "another studio" :release-year "1990"}]}
-                                                        person-id))]
+    
+    (let [fetch-all-people (fn []
+                            [{:id 1
+                              :first-name "Fred" :last-name "Bloggs"}
+                             {:id 2
+                              :first-name "Joe" :last-name "Smith"}])
+          fetch-films-for-person (fn [person-id]
+                                  (get {1 [{:title "dummy film" :studio "studio" :release-year "2024"}]
+                                        2 [{:title "another film" :studio "another studio" :release-year "1990"}]}
+                                       person-id))]
       (is (= {:status 200
               :headers {"Content-Type" "application/json"}
               :body
@@ -118,7 +119,7 @@
                {:id 2
                 :first-name "Joe" :last-name "Smith"
                 :films [{:title "another film" :studio "another studio" :release-year "1990"}]}]}
-             (api/get-all-people nil))))))
+             (api/get-all-people fetch-all-people fetch-films-for-person))))))
 
 (deftest popular-studio-db
   (testing "Check most popular studio returned from database"

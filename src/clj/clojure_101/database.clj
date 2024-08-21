@@ -9,3 +9,13 @@
     (store-new-person person-minus-films)
     (store-new-films films-for-db)
     person-with-id))
+
+(defn find-films-for-people
+  [people fetch-films-for-person]
+  (letfn [(get-films-for-person [person]
+            (->> person
+                 :id
+                 (fetch-films-for-person)
+                 (assoc person :films)))]
+    (map get-films-for-person people)))
+

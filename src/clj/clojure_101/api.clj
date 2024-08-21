@@ -58,19 +58,10 @@
            (swap! people add-person-with-id)
            first))))
 
-(defn find-films-for-people
-  [people ds]
-  (letfn [(get-films-for-person [person]
-            (->> person
-                 :id
-                 (postgres/find-films-for-person ds)
-                 (assoc person :films)))]
-    (map get-films-for-person people)))
-
 (defn get-all-people
-  [{ds :ds}]
-  (-> (postgres/find-all-people ds)
-      (find-films-for-people ds)
+  [fetch-people fetch-films-for-person]
+  (-> (fetch-people)
+      (database/find-films-for-people fetch-films-for-person)
       response
       (content-type "application/json")))
 
@@ -103,7 +94,10 @@
         response
         (content-type "application/json")))
   (GET "/peopledb" req
-    (get-all-people req))
+    (let [{ds :ds} req
+          fetch-all-people (partial postgres/find-all-people ds)
+          fetch-films-for-person (partial postgres/find-films-for-person ds)]
+     (get-all-people fetch-all-people fetch-films-for-person)))
   (GET "/popular-studio" []
     (-> @people
         most-popular-studio
