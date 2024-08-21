@@ -116,7 +116,7 @@
     (let [person-json (-> req :body slurp)
           store-new-person (partial postgres/create-person ds)
           store-new-films (partial postgres/create-films-for-person ds)]
-      (post-person store-new-person store-new-films person-json))))
+      (post-person person-json store-new-person store-new-films))))
 
 (comment
 

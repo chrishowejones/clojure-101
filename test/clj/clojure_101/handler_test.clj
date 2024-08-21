@@ -57,16 +57,22 @@
 (deftest check-add-peopledb-handler
   (with-redefs [postgres/create-person (fn [_ person]
                                          (assoc person :id 1))
-                postgres/create-films-for-person (fn [_ _ films]
+                postgres/create-films-for-person (fn [_ films]
                                                    films)]
     (let [response-body (-> (request :post "/api/peopledb")
                             (body (json/encode {:first-name "Fred" :last-name "Bloggs"}))
                             (content-type "application/json")
                             app
                             :body)]
-      (is (= {:id 1 :first-name "Fred" :last-name "Bloggs"}
+      (is (= {:first-name "Fred" :last-name "Bloggs"}
              (-> response-body
-                 (json/decode keyword)))))
+                 (json/decode keyword)
+                 (dissoc :id))))
+      (is (uuid?
+             (-> response-body
+                 (json/decode keyword)
+                 :id
+                 parse-uuid))))
     (let [response-body (-> (request :post "/api/peopledb")
                             (body (json/encode {:first-name "Fred"
                                                 :last-name "Bloggs"
@@ -74,11 +80,17 @@
                             (content-type "application/json")
                             app
                             :body)]
-      (is (= {:id 1 :first-name "Fred"
+      (is (= {:first-name "Fred"
               :last-name "Bloggs"
               :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}
              (-> response-body
-                 (json/decode keyword)))))))
+                 (json/decode keyword)
+                 (dissoc :id))))
+      (is (uuid?
+             (-> response-body
+                 (json/decode keyword)
+                 :id
+                 parse-uuid))))))
 
 (deftest check-popular-studio-handler
   (let [response-body (-> (request :get "/api/popular-studio") app :body)]
