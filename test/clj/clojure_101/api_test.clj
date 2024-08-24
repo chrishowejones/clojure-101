@@ -2,8 +2,7 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [clojure-101.api :as api]
-   [clojure-101.postgres :as postgres]
-   [cheshire.core :as json]))
+   [clojure-101.postgres :as postgres]))
 
 (deftest add-person
   (let [people (atom [])]

@@ -5,7 +5,7 @@
         person-with-id (assoc person :id person-id)
         person-minus-films (dissoc person-with-id :films)
         films (:films person)
-        films-for-db (map #(assoc % :person-id person-id) films)]
+        films-for-db (map #(assoc % :person-id person-id :id (random-uuid)) films)]
     (store-new-person person-minus-films)
     (store-new-films films-for-db)
     person-with-id))
