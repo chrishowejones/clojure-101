@@ -74,15 +74,23 @@
 (deftest post-person-db
   (testing "Post a new person using the database"
     (let [person-with-films (api/post-person "{\"first-name\":\"Fred\",\"last-name\":\"Bloggs\",\"films\":[{\"title\":\"dummy film\",\"studio\":\"studio\",\"release-year\":\"2024\"}]}"
-                                             identity
-                                             identity)]
+                                             (fn [person]
+                                               (is (= :no-films (get person :films :no-films)))
+                                               (is (uuid? (:id person)))
+                                               person)
+                                             (fn [films]
+                                               (is (every? uuid? (map :id films)))
+                                               films))]
       (is (= {:status 201
               :headers {"Content-Type" "application/json"}
               :body
               {:first-name "Fred" :last-name "Bloggs"
                :films [{:title "dummy film" :studio "studio" :release-year "2024"}]}}
-             (update person-with-films :body dissoc :id)))
-      (is (uuid? (get-in person-with-films [:body :id]))))
+             (-> person-with-films
+                 (update :body dissoc :id)
+                 (update-in [:body :films] (fn [films] (map #(dissoc % :id) films))))))
+      (is (uuid? (get-in person-with-films [:body :id])))
+      (is (every? uuid? (map :id (get-in person-with-films [:body :films])))))
     (testing "Adding a person with invalid films using the database results in error."
       (is (= {:status 500
               :headers {"Content-Type" "application/json"}

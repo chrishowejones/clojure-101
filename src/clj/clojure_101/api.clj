@@ -5,7 +5,8 @@
             [clojure.spec.alpha :as s]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [content-type response status]]
-            [clojure-101.database :as database]))
+            [clojure-101.database :as database]
+            [clojure-101.person :as person]))
 
 (def people-json
   "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -74,18 +75,23 @@
       (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
       (database/create-person store-new-person store-new-films person))))
 
+
 (defn post-person
-  "Takes a json string representing a person and their films, a function to store a new person and a function to store new films for that person.
+  "Takes a datasource and a json string representing a person and their films.
    Returns an HTTP response with a body containing the newly stored person with films or an error."
-  [person-json store-new-person store-new-films]
-  (let [new-person (create-person (json/decode person-json true) store-new-person store-new-films)
-        wrap-person-in-response (fn [status-code] (-> new-person
-                                                      response
-                                                      (status status-code)
-                                                      (content-type "application/json")))]
-    (if (:error new-person)
-      (wrap-person-in-response 500)
-      (wrap-person-in-response 201))))
+  [person-json store-person store-films]
+  (let [person-map (json/decode person-json true)
+        validated-person (person/validate-person person-map)
+        wrap-response (fn [person status-code] (-> person
+                                                   response
+                                                   (status status-code)
+                                                   (content-type "application/json")))]
+    (if (:error validated-person)
+      (wrap-response validated-person 500)
+      (let [person-to-store (person/prepare-person-to-store validated-person)]
+        (store-person (dissoc person-to-store :films))
+        (store-films (:films person-to-store))
+        (wrap-response person-to-store 201)))))
 
 (defroutes routes
   (GET "/" [] "add some links to routes here.")
@@ -114,9 +120,9 @@
           (content-type "application/json"))))
   (POST "/peopledb" {ds :ds :as req}
     (let [person-json (-> req :body slurp)
-          store-new-person (partial postgres/create-person ds)
-          store-new-films (partial postgres/create-films-for-person ds)]
-      (post-person person-json store-new-person store-new-films))))
+          store-person (partial postgres/create-person ds)
+          store-films (partial postgres/create-films-for-person ds)]
+      (post-person person-json store-person store-films))))
 
 (comment
 
