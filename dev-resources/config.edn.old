@@ -1,0 +1,3 @@
+{:database
+ {:jdbcUrl #or [#env JDBC_DATABASE_URL
+                "jdbc:postgresql://localhost:5432/clojure101?user=clojure101&password=clojure101"]}}

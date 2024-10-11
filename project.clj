@@ -29,7 +29,8 @@
                  [org.postgresql/postgresql "42.7.3"]
                  [com.zaxxer/HikariCP "5.1.0"]
                  [org.slf4j/slf4j-log4j12 "2.0.13"]
-                 [dev.weavejester/ragtime "0.9.4"]]
+                 [dev.weavejester/ragtime "0.9.4"]
+                 [aero "1.1.6"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
@@ -119,6 +120,7 @@
                                   ]
 
                    :source-paths ["src/cljs" "env/dev/clj"]
+                   :resource-paths ["dev-resources"]
                    :plugins [[lein-figwheel "0.5.20"
                               :exclusions [net.java.dev.jna/jna]]]
 
