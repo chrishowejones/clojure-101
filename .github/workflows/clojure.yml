@@ -2,18 +2,29 @@ name: Clojure CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: lein deps
-    - name: Run tests
-      run: lein test
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: lein deps
+      - name: Run tests
+        run: lein test
+
+  deploy:
+    runs-on: ubuntu-latest # Setup an environment to run the action
+    needs: build
+    environment: production
+    steps:
+      - uses: actions/checkout@v2 # This actions copy the repository on the environment
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This action deploys the content on Heroku
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}} #The Heroku api key we stored on our repo secret
+          heroku_app_name: "damp-oasis-34510" #The name of your heroku app - Must be unique in Heroku
+          heroku_email: "chris.howejones@gmail.com" #Your heroku user name
