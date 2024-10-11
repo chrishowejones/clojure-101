@@ -88,7 +88,7 @@
       (wrap-person-in-response 201))))
 
 (defroutes routes
-  (GET "/" [] "add some links to routes here.")
+  (GET "/" [] "I updated this.")
   (GET "/people" []
     (-> @people
         response
