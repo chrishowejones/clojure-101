@@ -8,7 +8,7 @@
    [clojure-101.postgres :as postgres]))
 
 (deftest check-root-api-handler
-  (is (= "add some links to routes here."
+  (is (= "I updated this."
          (->> (request :get "/api")
               app
               :body))))
