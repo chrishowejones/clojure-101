@@ -19,7 +19,8 @@ jobs:
 
   deploy:
     runs-on:
-      group: ubuntu-runners
+      group: ubuntu-latest
+      labels: my-runners
     needs: build
     if: ${{ github.event_name != 'pull_request' }}
     environment: production
