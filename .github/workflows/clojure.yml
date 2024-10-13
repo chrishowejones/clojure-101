@@ -18,7 +18,8 @@ jobs:
         run: lein test
 
   deploy:
-    runs-on: ubuntu-latest # Setup an environment to run the action
+    runs-on:
+      group: ubuntu-runners
     needs: build
     if: ${{ github.event_name != 'pull_request' }}
     environment: production
