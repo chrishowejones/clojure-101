@@ -23,7 +23,7 @@
                   :exclusions [org.clojure/clojure]]
                  [org.clojure/spec.alpha "0.2.168"]
                  [nrepl/nrepl "1.0.0"]
-                 [cider/cider-nrepl "0.36.0"]
+                 [cider/cider-nrepl "0.50.3"]
                  [cider/piggieback "0.5.3"]
                  [com.github.seancorfield/next.jdbc "1.3.939"]
                  [org.postgresql/postgresql "42.7.3"]
@@ -127,7 +127,7 @@
 
                    :env {:dev true}}
 
-             :repl {:plugins [[cider/cider-nrepl "0.36.1"]]}
+             :repl {:plugins [#_[cider/cider-nrepl "0.50.3"]]}
 
              :uberjar {:hooks [minify-assets.plugin/hooks]
                        :source-paths ["env/prod/clj"]
