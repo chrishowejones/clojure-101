@@ -17,5 +17,7 @@
 
   @app-state
 
-  (send-event! [2 0])
+  (send-event! [1 0])
+  (send-event! :restart)
+  (send-event! :undo)
   )
