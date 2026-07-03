@@ -1,13 +1,13 @@
 (ns clojure-101.handler
   (:require [clojure-101.api :as api]
+            [clojure-101.config :as config]
             [clojure-101.middleware :refer [wrap-api-middleware wrap-middleware]]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [context defroutes GET]]
             [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [next.jdbc :as jdbc]
-            [clojure-101.database :as database]
-            [clojure-101.config :as config]))
+            [next.jdbc :as jdbc]))
 
 (def mount-target
   [:div#app
@@ -43,6 +43,7 @@
 
 (defn wrap-ds [handler database]
   (fn [req]
+    (log/debug "Calling wrap-ds. Database: " database)
     (if database
       (->> (get-datasource database)
            (assoc req :ds)
@@ -61,7 +62,7 @@
 
 (comment
 
-  (def ds (get-datasource 
+  (def ds (get-datasource
            {:jdbcUrl "jdbc:postgresql://localhost:5432/clojure101?user=clojure101&password=clojure101"}))
 
   (get-datasource (:database @config/config))

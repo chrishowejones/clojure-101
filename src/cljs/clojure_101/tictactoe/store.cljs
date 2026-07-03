@@ -16,6 +16,8 @@
 (comment
 
   @app-state
+  @current-turn
 
-  (send-event! [2 0])
+  (send-event! [2 1])
+  (send-event! :undo)
   )

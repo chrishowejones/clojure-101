@@ -1,7 +1,12 @@
 (ns clojure-101.api-spec
   (:require [clojure.spec.alpha :as s]))
 
-(s/def ::id integer?)
+(defn integer-or-uuid?
+  [v]
+  (or (integer? v)
+      (uuid? v)))
+
+(s/def ::id integer-or-uuid?)
 (s/def ::first-name string?)
 (s/def ::last-name string?)
 (s/def ::title string?)
@@ -22,7 +27,11 @@
 
 (comment
 
-  (s/valid? ::person {:id 1 :first-name "chris" :last-name "howe-jones"})
+  (s/valid? ::id (random-uuid))
+  (s/valid? ::id 1)
+  (s/valid? ::id "1")
+
+  (s/valid? ::person {:id (random-uuid) :first-name "chris" :last-name "howe-jones"})
   (s/valid? ::people [{:first-name "chris" :last-name "howe-jones"}])
   (s/conform :clojure-101.api-spec/people [{:first-name "chris" :last-name "howe-jones"
                                             :films [{:title "A new hope" :studio "Paramount" :release-year "1977"}]

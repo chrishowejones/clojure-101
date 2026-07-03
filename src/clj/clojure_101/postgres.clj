@@ -5,7 +5,10 @@
 (defn create-person
   [ds person]
   (when person
-    (sql/insert! ds :person person)))
+    (if (:id person)
+      (sql/insert! ds :person person)
+      (let [new-id (random-uuid)]
+        (sql/insert! ds :person (assoc person :id new-id))))))
 
 (defn create-films-for-person
   [ds films]
@@ -43,6 +46,13 @@
   (find-all-people ds)
 
   (create-person ds {:first-name "Chris" :last-name "Howe-Jones"})
+
+  (require 'clojure-101.handler)
+  (create-person (clojure-101.handler/get-datasource db-spec)
+                 {:first-name "Chris" :last-name "Howe-Jones" :id #uuid "dbcdae30-ab93-4ef7-b7dd-85ce933d8729"})
+
+  (sql/delete! ds :person ["id = 'dbcdae30-ab93-4ef7-b7dd-85ce933d8729'"])
+  (sql/delete! ds :film ["person_id = 'dbcdae30-ab93-4ef7-b7dd-85ce933d8729'"])
 
   (sql/query ds ["select studio, count(studio) as count
                   from film
