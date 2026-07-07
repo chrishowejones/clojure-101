@@ -7,7 +7,8 @@
             [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [next.jdbc :as jdbc]))
+            [next.jdbc :as jdbc]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (def mount-target
   [:div#app
@@ -52,6 +53,8 @@
 
 (defroutes routes
   (-> (context "/api" [] api/routes)
+      (wrap-cors :access-control-allow-origin [#"http://localhost:3449"]
+                 :access-control-allow-methods [:get :post :put :delete])
       (wrap-ds (:database @config/config))
       wrap-api-middleware)
   (wrap-middleware (GET "/*" [] (loading-page)))

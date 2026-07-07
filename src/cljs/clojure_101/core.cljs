@@ -2,7 +2,8 @@
     (:require [reagent.core :as reagent :refer [atom]]
               [secretary.core :as secretary :include-macros true]
               [accountant.core :as accountant]
-              [clojure-101.tictactoe.core :as ttt]))
+              [clojure-101.tictactoe.core :as ttt]
+              [clojure-101.movies.core :as movies]))
 
 ;; -------------------------
 ;; Views
@@ -10,7 +11,8 @@
 (defn home-page []
   [:div [:h2 "Welcome to clojure-101 demo"]
    [:div [:a {:href "/about"} "go to about page"]]
-   [:div [:a {:href "/tictactoe"} "go to play tic-tac-toe"]]])
+   [:div [:a {:href "/tictactoe"} "go to play tic-tac-toe"]]
+   [:div [:a {:href "/movies"} "go to user movies"]]])
 
 (defn about-page []
   [:div [:h2 "About clojure-101"]
@@ -33,6 +35,13 @@
 
 (secretary/defroute "/tictactoe" []
   (reset! page #'ttt/tic-tac-toe))
+
+(secretary/defroute "/movies" []
+  (reset! page #'movies/movies-index-page))
+
+(secretary/defroute "/add-film" []
+  (reset! page #'movies/add-film-page))
+
 
 ;; -------------------------
 ;; Initialize app
@@ -58,5 +67,6 @@
   (reset! page #'home-page)
   (reset! page #'about-page)
   (reset! page #'ttt/tic-tac-toe)
+  (reset! page #'movies/movies-index-page)
 
   )

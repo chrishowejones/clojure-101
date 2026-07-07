@@ -16,6 +16,7 @@
                  [yogthos/config "0.9"]
                  [org.clojure/clojurescript "1.10.740"]
                  [secretary "1.2.3"]
+                 [cljs-http "0.1.49"]
                  [venantius/accountant "0.2.4"
                   :exclusions [org.clojure/tools.reader]]
                  [cheshire "5.8.0"]
@@ -110,14 +111,14 @@
                    :dependencies [[binaryage/devtools "0.9.7"]
                                   [ring/ring-mock "0.3.1"]
                                   [ring/ring-devel "1.6.2"]
+                                  [ring-cors "0.1.13"]
                                   [prone "1.1.4"]
                                   [figwheel-sidecar "0.5.20"
                                    :exclusions [net.java.dev.jna/jna]]
                                   [net.java.dev.jna/jna "5.14.0"]
                                   [cider/piggieback "0.5.3"]
                                   [devcards "0.2.3" :exclusions [cljsjs/react]]
-                                  [pjstadig/humane-test-output "0.8.3"]
-                                  ]
+                                  [pjstadig/humane-test-output "0.8.3"]]
 
                    :source-paths ["src/cljs" "env/dev/clj"]
                    :resource-paths ["dev-resources"]

@@ -19,3 +19,9 @@
                  (assoc person :films)))]
     (map get-films-for-person people)))
 
+(defn find-films-for-person
+  [person fetch-films-for-person]
+  (->> person
+       :id
+       (fetch-films-for-person)
+       (assoc person :films)))

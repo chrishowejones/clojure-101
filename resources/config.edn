@@ -1,0 +1,5 @@
+{:database {:dbtype "postgresql"
+            :dbname "clojure101"
+            :host "localhost"
+            :user "clojure101"
+            :password "clojure101"}}

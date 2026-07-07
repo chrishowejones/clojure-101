@@ -18,6 +18,11 @@
   [ds]
   (sql/query ds ["select * from person"]))
 
+(defn find-person
+  [ds id]
+  (first
+   (sql/query ds ["select * from person where id = ?::uuid" id])))
+
 (defn find-films-for-person
   [ds person-id]
   (sql/query ds ["select title, studio, release_year from film where person_id = ?" person-id]))
@@ -70,5 +75,6 @@
                                   :release-year "1972"}])
 
   (find-films-for-person ds 1)
+  (find-person ds "727d3923-73cd-434e-a166-cd13b0478eaf")
 
   )

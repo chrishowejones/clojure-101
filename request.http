@@ -1,0 +1,33 @@
+# -*- restclient -*-
+
+# GET api root
+GET http://localhost:3000/api
+
+# GET people (stored in atom)
+GET http://localhost:3000/api/people
+
+# GET people in database
+GET http://localhost:3000/api/peopledb
+
+# GET person in database
+GET http://localhost:3000/api/peopledb/c8818314-b2fe-46f4-8157-e0f7c57ffde3
+
+# GET popular studio (stored in atom)
+GET http://localhost:3000/api/popular-studio
+
+# GET popular studio in database
+GET http://localhost:3000/api/popular-studio-db
+
+# POST new person (stored in atom)
+POST http://localhost:3000/api/people
+content-type: application/json
+
+{"first-name":"Jonny",
+ "last-name": "Hobbs",
+ "films": [{"title": "Cars", "studio": "Disney", "release-year": "2006"}]}
+
+# POST new person in database
+POST http://localhost:3000/api/peopledb
+content-type: application/json
+
+{"first-name":"Danielle","last-name":"Howe-Jones"}
