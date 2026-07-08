@@ -72,6 +72,12 @@
       response
       (content-type "application/json")))
 
+(defn get-people-by-name [fetch-people-by-name fetch-films-for-person]
+  (-> (fetch-people-by-name)
+      (database/find-films-for-people fetch-films-for-person)
+      response
+      (content-type "application/json")))
+
 (defn create-person
   "Create a new person. Takes a map representing an unvalidated person, a function to store a new person and a function to store new films for a person.
    Returns a map representing the newly stored person with their films."
@@ -104,13 +110,19 @@
     (let [{ds :ds} req
           fetch-all-people (partial postgres/find-all-people ds)
           fetch-films-for-person (partial postgres/find-films-for-person ds)]
-     (get-all-people fetch-all-people fetch-films-for-person)))
+      (get-all-people fetch-all-people fetch-films-for-person)))
   (GET "/peopledb/:id" [id :as req]
     (let [{:keys [ds]} req
           _ (println "Id:" id)
           fetch-person (partial postgres/find-person ds id)
           fetch-films-for-person (partial postgres/find-films-for-person ds)]
-     (get-person fetch-person fetch-films-for-person)))
+      (get-person fetch-person fetch-films-for-person)))
+  (POST "/peopledb/search" req
+    (let [{:keys [ds body]} req
+          name (:name body)
+          fetch-people-by-name (fn [] (postgres/find-people-by-name ds name))
+          fetch-films-for-person (partial postgres/find-films-for-person ds)]
+      (get-people-by-name fetch-people-by-name fetch-films-for-person)))
   (GET "/popular-studio" []
     (-> @people
         most-popular-studio

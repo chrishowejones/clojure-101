@@ -31,3 +31,9 @@ POST http://localhost:3000/api/peopledb
 content-type: application/json
 
 {"first-name":"Danielle","last-name":"Howe-Jones"}
+
+# POST search name
+POST http://localhost:3000/api/peopledb/search
+content-type: application/json
+
+{"name":  "C"}

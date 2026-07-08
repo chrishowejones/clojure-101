@@ -1,6 +1,7 @@
 (ns clojure-101.postgres
   (:require [next.jdbc :as jdbc]
-            [next.jdbc.sql :as sql]))
+            [next.jdbc.sql :as sql]
+            [clojure.string :as str]))
 
 (defn create-person
   [ds person]
@@ -22,6 +23,15 @@
   [ds id]
   (first
    (sql/query ds ["select * from person where id = ?::uuid" id])))
+
+(defn find-people-by-name
+
+  [ds name]
+  (let [[first-name last-name & _rest] (str/split name #"\s")]
+    (->> (if (str/blank? last-name)
+           ["select * from person where first_name ilike ?" (str first-name "%")]
+           ["select * from person where first_name ilike ? and last_name ilike ?" (str first-name "%") (str last-name "%")])
+         (sql/query ds))))
 
 (defn find-films-for-person
   [ds person-id]
@@ -76,5 +86,6 @@
 
   (find-films-for-person ds 1)
   (find-person ds "727d3923-73cd-434e-a166-cd13b0478eaf")
+  (find-people-by-name ds "c")
 
   )

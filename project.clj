@@ -15,10 +15,9 @@
                  [hiccup "1.0.5"]
                  [yogthos/config "0.9"]
                  [org.clojure/clojurescript "1.10.740"]
-                 [secretary "1.2.3"]
+                 [metosin/reitit "0.10.1"]
+                 [metosin/reitit-frontend "0.10.1"]
                  [cljs-http "0.1.49"]
-                 [venantius/accountant "0.2.4"
-                  :exclusions [org.clojure/tools.reader]]
                  [cheshire "5.8.0"]
                  [org.clojure/core.logic "0.8.11"
                   :exclusions [org.clojure/clojure]]

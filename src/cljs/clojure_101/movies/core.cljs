@@ -39,7 +39,7 @@
 (defn movies-index-page
   [id]
   (let [fetch-data! (fn []
-                      (go (let [response (<! (http/get "http://localhost:3000/api/peopledb/c8818314-b2fe-46f4-8157-e0f7c57ffde3"
+                      (go (let [response (<! (http/get (str "http://localhost:3000/api/peopledb/" id)
                                                        {:with-credentials? false}))]
                             ;; Update the atom, which automatically triggers a UI re-render
                             (reset! person (:body response)))))]

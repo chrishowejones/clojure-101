@@ -3,7 +3,7 @@
             [ring.middleware.defaults
              :refer
              [api-defaults site-defaults wrap-defaults]]
-            [ring.middleware.json :refer [wrap-json-response]]))
+            [ring.middleware.json :refer [wrap-json-body wrap-json-response]]))
 
 (defn wrap-middleware [handler]
   (-> handler
@@ -14,4 +14,5 @@
   (-> handler
       (wrap-defaults api-defaults)
       wrap-exceptions
+      (wrap-json-body {:keywords? true})
       wrap-json-response))

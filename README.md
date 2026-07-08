@@ -8,7 +8,7 @@ The Clojurescript is bootstrapped from the Clojure handler namespace
 There are 3 distinct parts to the project.
 
 1. ClojureScript home and about pages that are text and demonstrate
-   using the secretary library to handle routing for a single page
+   using the reitit library to handle routing for a single page
    application. See src/cljs/clojure_101/core.cljs
 2. ClojureScript TicTacToe game - see src/cljs/clojure_101/tictactoe/
 3. Clojure API that serves up two resources (/api/people and
@@ -27,7 +27,7 @@ locally.
 See [Set up database](./set-up-database.org).
 
 
- 
+
 ## Usage
 
 You can run the project in development mode using the Leiningen build
