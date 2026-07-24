@@ -37,8 +37,19 @@
    ["/movies/:id" {:name :movies
                    :view (fn [{:keys [path]}]
                            [movies/movies-index-page (:id path)])
-                   :controllers [{:start (fn [_] (reset! movies/person nil))}]}]
-   ["/add-film" {:name :add-film :view (fn [] [movies/add-film-page])}]])
+                   :controllers [{:parameters {:path [:id]}
+                                  :start (fn [{:keys [path]}]
+                                           (movies/fetch-person! (:id path)))
+                                  :stop (fn [_]
+                                          (reset! movies/person nil)
+                                          (reset! movies/message nil))}]}]
+   ["/movies/:id/add-film" {:name :add-film
+                            :view (fn [{:keys [path]}] [movies/add-film-page (:id path)])
+                            :controllers [{:parameters {:path [:id]}
+                                           :start (fn [{:keys [path]}]
+                                                    (movies/fetch-person! (:id path)))
+                                           :stop (fn [_]
+                                                   (reset! movies/person nil))}]}]])
 
 (defn current-page []
   (when @route-match

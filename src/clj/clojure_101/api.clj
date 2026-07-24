@@ -1,11 +1,12 @@
 (ns clojure-101.api
   (:require [cheshire.core :as json]
             [clojure-101.api-spec :as api-spec]
+            [clojure-101.database :as database]
             [clojure-101.postgres :as postgres]
             [clojure.spec.alpha :as s]
-            [compojure.core :refer [defroutes GET POST]]
-            [ring.util.response :refer [content-type response status]]
-            [clojure-101.database :as database]))
+            [clojure.tools.logging :as log]
+            [compojure.core :refer [defroutes DELETE GET POST]]
+            [ring.util.response :refer [content-type response status]]))
 
 (def people-json
   "[{\"id\":1,\"first-name\":\"Chris\",\"last-name\":\"Howe-Jones\",
@@ -87,11 +88,28 @@
       (assoc {} :error  (s/explain-str ::api-spec/person unvalidated-person))
       (database/create-person store-new-person store-new-films person))))
 
+(defn create-film
+  "Create a new film for a person. Takes a map representing a person id, an unvalidated film, a function to store a new film.
+   Returns a map representing the newly stored film."
+  [person-id unvalidated-film store-new-films]
+  (let [film (s/conform ::api-spec/film unvalidated-film)]
+    (if (s/invalid? film)
+      (assoc {} :error  (s/explain-str ::api-spec/film unvalidated-film))
+      (database/create-film person-id film store-new-films))))
+
+(defn delete-film
+  "Delete a film. Takes an id for the film to be deleted and a function to execute against the database."
+  [film-id delete-film-db]
+  (let [db-response (delete-film-db film-id)]
+    (if (= 1 (:next.jdbc/update-count db-response))
+      {:status :ok}
+      {:error :not-deleted})))
+
 (defn post-person
   "Takes a json string representing a person and their films, a function to store a new person and a function to store new films for that person.
    Returns an HTTP response with a body containing the newly stored person with films or an error."
   [person-json store-new-person store-new-films]
-  (let [new-person (create-person (json/decode person-json true) store-new-person store-new-films)
+  (let [new-person (create-person person-json store-new-person store-new-films)
         wrap-person-in-response (fn [status-code] (-> new-person
                                                       response
                                                       (status status-code)
@@ -99,6 +117,32 @@
     (if (:error new-person)
       (wrap-person-in-response 500)
       (wrap-person-in-response 201))))
+
+(defn post-film
+  "Takes a json string representing a film for a person, a function to store new films for that person.
+   Returns an HTTP response with a body containing the newly stored person with films or an error."
+  [person-id film-json store-new-films]
+  (let [new-film (create-film person-id film-json store-new-films)
+        wrap-film-in-response (fn [status-code] (-> new-film
+                                                    response
+                                                    (status status-code)
+                                                    (content-type "application/json")))]
+    (if (:error new-film)
+      (wrap-film-in-response 500)
+      (wrap-film-in-response 201))))
+
+(defn remove-film
+  "Takes a film id, a function to delete the film.
+   Returns an HTTP response with a body containing the count of films deleted or an error"
+  [film-id delete-film-db]
+  (let [delete-film-response (delete-film (parse-uuid film-id) delete-film-db)
+        wrap-film-in-response (fn [status-code] (-> delete-film-response
+                                                    response
+                                                    (status status-code)
+                                                    (content-type "application/json")))]
+    (if (:error delete-film-response)
+      (wrap-film-in-response 404)
+      (wrap-film-in-response 204))))
 
 (defroutes routes
   (GET "/" [] "I updated this.")
@@ -113,7 +157,6 @@
       (get-all-people fetch-all-people fetch-films-for-person)))
   (GET "/peopledb/:id" [id :as req]
     (let [{:keys [ds]} req
-          _ (println "Id:" id)
           fetch-person (partial postgres/find-person ds id)
           fetch-films-for-person (partial postgres/find-films-for-person ds)]
       (get-person fetch-person fetch-films-for-person)))
@@ -137,11 +180,20 @@
       (-> (response (add-person people (json/decode person-json true)))
           (status 201)
           (content-type "application/json"))))
-  (POST "/peopledb" {ds :ds :as req}
-    (let [person-json (-> req :body slurp)
-          store-new-person (partial postgres/create-person ds)
+  (POST "/peopledb" {ds :ds person-json :body}
+    (let [store-new-person (partial postgres/create-person ds)
           store-new-films (partial postgres/create-films-for-person ds)]
-      (post-person person-json store-new-person store-new-films))))
+      (post-person person-json store-new-person store-new-films)))
+  (POST "/peopledb/:id/film" {ds :ds params :params film :body}
+    (let [{:keys [id]} params
+          store-new-film (partial postgres/create-films-for-person ds)]
+      (log/info "create film:" film ", id:" id)
+      (post-film id film store-new-film)))
+  (DELETE "/film/:id" {ds :ds params :params}
+          (let [{:keys [id]} params
+                delete-film-db (partial postgres/delete-film ds)]
+            (log/info "delete film id:" id)
+            (remove-film id delete-film-db))))
 
 (comment
 

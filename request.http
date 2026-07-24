@@ -30,10 +30,31 @@ content-type: application/json
 POST http://localhost:3000/api/peopledb
 content-type: application/json
 
-{"first-name":"Danielle","last-name":"Howe-Jones"}
+{"first-name":"Chris","last-name":"Howe-Jones",
+ "films": [{"title": "The Godfather", "studio": "Paramount", "release-year": "1976"},
+           {"title": "Star Wars: The Empire Strikes Back", "studio": "Lucas Films", "release-year": "1980"},
+           {"title": "Indiana Jones and the Arc of the Raiders of the Lost Ark", "studio": "Lucas Films", "release-year": "1981"}]}
+
+# POST new person in database
+POST http://localhost:3000/api/peopledb
+content-type: application/json
+
+{"first-name":"Cerys","last-name":"Howe-Jones",
+ "films": [{"title": "Bambi", "studio": "Disney", "release-year": "1942"},
+           {"title": "Cars", "studio": "Pixar", "release-year": "2006"},
+           {"title": "The Truman Show", "studio": "Paramount", "release-year": "1998"}]}
 
 # POST search name
 POST http://localhost:3000/api/peopledb/search
 content-type: application/json
 
-{"name":  "C"}
+{"name":  "Cerys"}
+
+# POST new film
+POST http://localhost:3000/api/peopledb/c8818314-b2fe-46f4-8157-e0f7c57ffde3/film
+content-type: application/json
+
+{"title":  "Truman Show", "studio": "Paramount", "release-year": "1998"}
+
+# DELETE film
+DELETE http://localhost:3000/api/film/0a7a907d-3f65-4ddc-ae0a-3648251d2eee

@@ -50,11 +50,11 @@
 
     Then we can execute the following commands.
 
-    #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "password" :dbuser "postgres"
+    #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "postgres" :dbuser "postgres"
       CREATE USER clojure101 WITH PASSWORD 'clojure101';
     #+end_src
 
-    #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "password" :dbuser "postgres"
+    #+begin_src sql :engine "postgres" :dbhost "localhost"  :dbpassword "postgres" :dbuser "postgres"
       CREATE DATABASE clojure101 WITH OWNER clojure101;
     #+end_src
 

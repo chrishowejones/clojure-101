@@ -25,7 +25,7 @@
                              (println (.. e -target -value))
                              (swap! form-state (fn [v]
                                                  (assoc v :name (.. e -target -value)))))}]
-       [:button {:type "submit"} "Search"]])))
+       [:button.btn-primary {:type "submit"} "Search"]])))
 
 (defn user-row
   [first-name last-name id]
@@ -53,7 +53,8 @@
         [:row [:h2 "People"]]
         (for [{:keys [first-name last-name id]} body]
           [:div.text-left {:key (str first-name ":" last-name)}
-           [user-row first-name last-name id]])])]]])
+           [user-row first-name last-name id]
+           [:hr]])])]]])
 
 (comment
   @response-atom

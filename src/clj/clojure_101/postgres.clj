@@ -15,6 +15,10 @@
   [ds films]
   (sql/insert-multi! ds :film films))
 
+(defn delete-film
+  [ds id]
+  (sql/delete! ds :film ["id = ?" id]))
+
 (defn find-all-people
   [ds]
   (sql/query ds ["select * from person"]))
@@ -25,17 +29,21 @@
    (sql/query ds ["select * from person where id = ?::uuid" id])))
 
 (defn find-people-by-name
-
+  "Find peeople by name. Simple fuzzy search to find subset of string (case insensitive)."
   [ds name]
-  (let [[first-name last-name & _rest] (str/split name #"\s")]
-    (->> (if (str/blank? last-name)
-           ["select * from person where first_name ilike ?" (str first-name "%")]
-           ["select * from person where first_name ilike ? and last_name ilike ?" (str first-name "%") (str last-name "%")])
+  (let [[first-search-str second-search-str & _rest] (str/split name #"\s")]
+    (->> (if (str/blank? second-search-str)
+           ["select * from person where first_name ilike ? or last_name ilike ?"
+            (str "%" first-search-str "%")
+            (str "%" first-search-str "%")]
+           ["select * from person where first_name ilike ? and last_name ilike ?"
+            (str "%" first-search-str "%")
+            (str "%" second-search-str "%")])
          (sql/query ds))))
 
 (defn find-films-for-person
   [ds person-id]
-  (sql/query ds ["select title, studio, release_year from film where person_id = ?" person-id]))
+  (sql/query ds ["select id, title, studio, release_year from film where person_id = ?" person-id]))
 
 (defn find-popular-studio
   [ds]
@@ -66,7 +74,7 @@
   (create-person (clojure-101.handler/get-datasource db-spec)
                  {:first-name "Chris" :last-name "Howe-Jones" :id #uuid "dbcdae30-ab93-4ef7-b7dd-85ce933d8729"})
 
-  (sql/delete! ds :person ["id = 'dbcdae30-ab93-4ef7-b7dd-85ce933d8729'"])
+  (sql/delete! ds :person ["id = 'ce1f1823-1a9e-4b60-be18-9d522fd9472e'"])
   (sql/delete! ds :film ["person_id = 'dbcdae30-ab93-4ef7-b7dd-85ce933d8729'"])
 
   (sql/query ds ["select studio, count(studio) as count

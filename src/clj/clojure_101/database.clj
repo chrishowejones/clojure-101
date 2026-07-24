@@ -10,6 +10,13 @@
     (store-new-films films-for-db)
     person-with-id))
 
+(defn create-film [person-id film store-new-film]
+  (let [film-for-db (assoc film
+                           :person-id (parse-uuid person-id)
+                           :id (random-uuid))]
+    (store-new-film [film-for-db])
+    film-for-db))
+
 (defn find-films-for-people
   [people fetch-films-for-person]
   (letfn [(get-films-for-person [person]
